@@ -363,6 +363,7 @@ canvas{width:100%;border-radius:var(--radius);display:block}
     <div id="res2" style="display:none">
 
       <div class="section-label">Diagnosi barocca</div>
+      <div id="b-header" style="margin-bottom:10px"></div>
       <div class="diagnosi-grid" id="b-diagnosi"></div>
 
       <div class="section-label">Punteggi</div>
@@ -706,10 +707,20 @@ async function runBarocco(){
   document.getElementById('err2').style.display='none';
   document.getElementById('res2').style.display='none';
   const d=window._ld2;
-  const sys=`Sei un esperto di fotografia pittorico-barocca (Caravaggio, Rembrandt, Vermeer, De La Tour) e di Luminar Neo con Trasferimento Colore. Analizza questo ritratto.
-Dati tecnici: Zone scure ${d.dark}%, mezzitoni ${d.mid}%, luci ${d.light}%, luminosità media ${Math.round(d.avgL)}/255.
+  const sys=`Sei un esperto di fotografia artistica e di Luminar Neo con Trasferimento Colore. Conosci i 6 stili di Andrea: Pittorico-Barocco (Caravaggio, Rembrandt, Vermeer), B&W Architettura Drammatica, Dark Forest Moody, Luce Volumetrica (Turner, De La Tour), Fantasy Soft, Nord Barocco (Caspar David Friedrich, Sotiris Andonopoulos).
+
+Prima di tutto RILEVA il tipo di foto: ritratto, paesaggio, architettura, foresta, paesaggio alpino/nordico, luce volumetrica. Poi analizza in base al tipo rilevato.
+
+Per RITRATTI: valuta luce scultorea, pelle, sfondo, accento cromatico.
+Per PAESAGGI/FORESTE/ARCHITETTURA: valuta atmosfera, profondità, luce direzionale, composizione, cielo, nebbia/foschia.
+Per LUCE VOLUMETRICA: valuta raggi di luce, particelle, contrasto luce/ombra, teatralità.
+
+I riferimenti pittorici devono essere coerenti con il tipo di foto — per paesaggi usa Friedrich, Turner, Monet scuro, Gustave Courbet, Ivan Shishkin; per foreste usa Arnold Böcklin, Gustave Moreau; per architettura usa Piranesi, Canaletto drammatico; per ritratti usa Caravaggio, Rembrandt, Vermeer, De La Tour.
+
+Dati tecnici: Zone scure \${d.dark}%, mezzitoni \${d.mid}%, luci \${d.light}%, luminosità media \${Math.round(d.avgL)}/255.
+
 Rispondi SOLO con JSON valido senza markdown:
-{"diagnosi":[{"label":"Luce direzionale","stato":"ok|warn|bad","valore":"breve","nota":"1 frase"},{"label":"Profondità ombre","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Sfondo","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Contrasto barocco","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Tono pelle","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Accento cromatico","stato":"ok|warn|bad","valore":"breve","nota":"frase"}],"scores":[{"label":"Luce scultorea","val":7},{"label":"Profondità nero","val":6},{"label":"Tono pittorico","val":5},{"label":"Contrasto barocco","val":8},{"label":"Pelle organica","val":7},{"label":"Composizione","val":8}],"riferimenti":[{"match":"top","opera":"nome opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"2 frasi","cosa_prendere":"cosa copiare","search_query":"query Google Images"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"}],"azioni":[{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"cosa fare","luminar":"tool Luminar con valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"}],"sintesi":"2-3 righe sintesi"}`;
+{"tipo_foto":"ritratto|paesaggio|foresta|architettura|luce_volumetrica|alpino","stile_consigliato":"stile Andrea più adatto","diagnosi":[{"label":"Luce direzionale","stato":"ok|warn|bad","valore":"breve","nota":"1 frase"},{"label":"Profondità ombre","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Atmosfera","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Contrasto barocco","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Tono generale","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Composizione","stato":"ok|warn|bad","valore":"breve","nota":"frase"}],"scores":[{"label":"Luce scultorea","val":7},{"label":"Profondità nero","val":6},{"label":"Tono pittorico","val":5},{"label":"Contrasto drammatico","val":8},{"label":"Atmosfera","val":7},{"label":"Composizione","val":8}],"riferimenti":[{"match":"top","opera":"nome opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"2 frasi specifiche per questa foto","cosa_prendere":"cosa copiare con trasferimento colore","search_query":"query Google Images esatta"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"}],"azioni":[{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"cosa fare e dove in questa foto specifica","luminar":"tool Luminar Neo con valori numerici"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"}],"sintesi":"2-3 righe sintesi su questa foto specifica"}`;
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3500,system:sys,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:imgMime_2,data:imgB64_2}},{type:'text',text:'Analizza questo ritratto per il workflow Pittorico-Barocco con Luminar Neo. Dimmi quale dipinto scaricare per il trasferimento colore.'}]}]})});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
@@ -728,6 +739,11 @@ Rispondi SOLO con JSON valido senza markdown:
 }
 
 function renderBarocco(d){
+  // Mostra tipo foto e stile consigliato
+  const tipoMap={ritratto:'Ritratto',paesaggio:'Paesaggio',foresta:'Foresta / Dark Forest',architettura:'Architettura',luce_volumetrica:'Luce Volumetrica',alpino:'Paesaggio Alpino / Nord Barocco'};
+  const tipoLabel = tipoMap[d.tipo_foto]||d.tipo_foto||'Foto';
+  const bHeader = document.getElementById('b-header');
+  if(bHeader) bHeader.innerHTML = `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;background:var(--gold-light);color:var(--gold-dark);margin-right:8px">${tipoLabel}</span><span style="font-size:11px;color:var(--text2)">Stile consigliato: <strong style="color:var(--green)">${d.stile_consigliato||''}</strong></span>`;
   const dg=document.getElementById('b-diagnosi');
   dg.innerHTML=(d.diagnosi||[]).map(x=>`<div class="diag-card ${x.stato}"><div class="d-label">${x.label}</div><div class="d-val">${x.valore}</div><div class="d-note">${x.nota}</div></div>`).join('');
   const ss=document.getElementById('b-scores');
