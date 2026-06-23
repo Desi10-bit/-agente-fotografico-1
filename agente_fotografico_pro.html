@@ -505,7 +505,7 @@ async function runAgente() {
   document.getElementById('err1').style.display = 'none';
   document.getElementById('res1').style.display = 'none';
 
-  const sys = `Sei un assistente fotografico esperto di Andrea, fotografo con Canon 5D Mark III. Stili: Pittorico-Barocco, B&W Architettura Drammatica, Dark Forest Moody, Luce Volumetrica, Fantasy Soft, Nord Barocco (alpino romantico + monocromatismo nordico). Workflow: Lightroom→PS(MTC Pro→MTC Density→MTC ChromaWarp→D&B)→Luminar Neo→Topaz AI→LR export.
+  const sys = `Sei agente fotografico di Andrea (Canon 5D Mark III). Stili: Pittorico-Barocco, B&W Architettura, Dark Forest, Luce Volumetrica, Fantasy Soft, Nord Barocco. Workflow: LR→PS(MTC Pro→MTC Density→MTC ChromaWarp→D&B)→Luminar Neo→Topaz→LR.
 Rispondi SOLO con JSON valido senza markdown:
 {"style":"nome","pot":{"foto":120,"preset":35,"pdf":25},"metrics":[{"l":"Stock","s":7},{"l":"Originalità","s":8},{"l":"Qualità tec.","s":9},{"l":"Stampa","s":6},{"l":"Social","s":8}],"analisi":"testo","strengths":"testo","pipeline":[{"n":"1","sw":"sw","az":"az","det":"det"}],"wf_note":"testo","farei":[{"sw":"Lightroom","titolo":"Prima impostazione base","desc":"cosa farei esattamente con valori numerici precisi"},{"sw":"MTC Pro","titolo":"Color web e contrasto","desc":"cosa farei con MTC Pro su questa foto — valori esatti"},{"sw":"MTC Density","titolo":"Densità e struttura","desc":"cosa farei con MTC Density — valori esatti"},{"sw":"MTC ChromaWarp","titolo":"Viraggio cromatico","desc":"cosa farei con ChromaWarp — preset e valori"},{"sw":"Dodge & Burn","titolo":"Scultura luce e ombra","desc":"dove aggiungerei luce e dove toglierla su questa foto specifica"},{"sw":"Luminar Neo","titolo":"Atmosfera e pelle","desc":"cosa farei in Luminar Neo — Relight AI, Skin AI, Color Grading con valori"},{"sw":"Topaz AI","titolo":"Dettaglio finale","desc":"DeNoise o Sharpen — impostazioni per questa foto"},{"sw":"Export finale","titolo":"Export e destinazione","desc":"formato, dimensioni, profilo colore per stock e Instagram"}],"caption":"caption","hashtags":["h1","h2"],"timing":"testo","export":"testo","cmp_style":"stile","cmp_cur":["p1","p2","p3"],"cmp_alt":["p1","p2","p3"],"cmp_rec":"testo","editorial":[{"d":"Lun","f":"Post","t":"18:30","c":"contenuto"}]}`;
 
@@ -513,14 +513,31 @@ Rispondi SOLO con JSON valido senza markdown:
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 4000, system: sys, messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: imgMime_1, data: imgB64_1 } }, { type: 'text', text: 'Stile: ' + selStyle_1 + '. Analizza. Rispondi SOLO con JSON.' }] }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 6000, system: sys, messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: imgMime_1, data: imgB64_1 } }, { type: 'text', text: 'Stile: ' + selStyle_1 + '. Analizza. Rispondi SOLO con JSON.' }] }] })
     });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const raw = await resp.json();
     const txt = (raw.content || []).map(i => i.text || '').join('');
     const m = txt.match(/\{[\s\S]*\}/);
-    if (!m) throw new Error('JSON non trovato');
-    data1 = JSON.parse(m[0]);
+    if (!m) throw new Error('JSON non trovato nella risposta');
+    let jsonStr = m[0];
+    // Pulizia robusta: rimuovi caratteri di controllo
+    jsonStr = jsonStr.replace(/[\x00-\x1F\x7F]/g, ' ');
+    // Prova parsing diretto
+    let parsed;
+    try {
+      parsed = JSON.parse(jsonStr);
+    } catch(pe) {
+      // Tenta riparazione troncatura: chiudi array e oggetti aperti
+      let fixed = jsonStr;
+      const opens = (fixed.match(/\[/g)||[]).length - (fixed.match(/\]/g)||[]).length;
+      const obrace = (fixed.match(/\{/g)||[]).length - (fixed.match(/\}/g)||[]).length;
+      for(let i=0;i<opens;i++) fixed += ']';
+      for(let i=0;i<obrace;i++) fixed += '}';
+      try { parsed = JSON.parse(fixed); }
+      catch(pe2) { throw new Error('JSON malformato: ' + pe.message + ' — Riprova analisi'); }
+    }
+    data1 = parsed;
     renderAgente(data1);
   } catch(e) {
     const eb = document.getElementById('err1');
