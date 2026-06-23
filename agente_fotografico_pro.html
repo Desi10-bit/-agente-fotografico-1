@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agente Fotografico Pro — Andrea</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --green:#1D9E75;--green-dark:#0F6E56;--green-light:rgba(29,158,117,0.10);
+  --bg:#fff;--bg2:#f7f7f5;--bg3:#f0f0ec;
+  --text:#1a1a1a;--text2:#666660;--text3:#999990;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
+  --radius:8px;--radius-lg:12px;--shadow:0 1px 4px rgba(0,0,0,0.06);
+  --gold:#B8860B;--gold-light:#FDF6E3;--gold-dark:#7B5900;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;--text:#f0f0ec;--text2:#aaaaaa;--text3:#666660;--border:rgba(255,255,255,0.10);--border2:rgba(255,255,255,0.20);--shadow:0 1px 4px rgba(0,0,0,0.3);}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);min-height:100vh}
+.wrapper{max-width:820px;margin:0 auto;padding:24px 16px 60px}
+
+/* NAV TABS */
+.main-nav{display:flex;gap:0;background:var(--bg);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);margin-bottom:24px;border:0.5px solid var(--border)}
+.nav-btn{flex:1;padding:14px 10px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text2);font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.15s;border-bottom:2px solid transparent}
+.nav-btn:hover{background:var(--bg2);color:var(--text)}
+.nav-btn.active{color:var(--green);border-bottom-color:var(--green);background:var(--bg)}
+.page{display:none}.page.active{display:block}
+
+/* HEADER */
+.app-header{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.app-header .icon{width:44px;height:44px;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0}
+.app-header h1{font-size:19px;font-weight:600}
+.app-header p{font-size:12px;color:var(--text2);margin-top:2px}
+
+/* CARD */
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
+
+/* API KEY */
+.api-row{display:flex;gap:8px}
+.api-row input{flex:1;padding:9px 12px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg2);color:var(--text);font-size:12px;font-family:monospace}
+.api-row input:focus{outline:none;border-color:var(--green)}
+.api-row button{padding:9px 16px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:13px;cursor:pointer;font-weight:500}
+.api-row button:hover{background:var(--green-dark)}
+.api-note{font-size:11px;color:var(--text3);margin-top:6px}
+.api-ok{font-size:12px;color:var(--green);margin-top:6px;display:none}
+
+/* UPLOAD */
+.upload-zone{border:1.5px dashed var(--border2);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:background 0.15s}
+.upload-zone:hover{background:var(--bg2)}
+.upload-zone i{font-size:32px;color:var(--text3);display:block;margin-bottom:8px}
+.upload-zone p{font-size:13px;color:var(--text2)}
+.preview-img{width:100%;max-height:320px;object-fit:cover;border-radius:var(--radius);display:none;margin-top:10px}
+.nuova-btn{width:100%;margin-top:8px;padding:8px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);font-size:12px;color:var(--text2);cursor:pointer;display:none;font-family:inherit}
+.nuova-btn:hover{background:var(--bg3)}
+
+/* STYLE GRID */
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.style-btn{padding:9px 11px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg2);cursor:pointer;text-align:left;color:var(--text);font-family:inherit;transition:all 0.15s}
+.style-btn:hover{background:var(--bg3)}
+.style-btn.active{border-color:var(--green);background:var(--green-light);color:var(--green-dark)}
+.style-btn strong{display:block;font-size:12px;font-weight:600}
+.style-btn span{font-size:10px;color:var(--text2);margin-top:1px;display:block}
+
+/* ANALYZE BTN */
+.analyze-btn{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:var(--radius-lg);font-size:14px;font-weight:600;cursor:pointer;margin:14px 0;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.15s;box-shadow:0 2px 8px rgba(29,158,117,0.25)}
+.analyze-btn:hover{background:var(--green-dark)}
+.analyze-btn:disabled{background:var(--bg3);color:var(--text3);cursor:not-allowed;box-shadow:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin 1s linear infinite;display:inline-block}
+
+/* TABS */
+.tabs{display:flex;border-bottom:0.5px solid var(--border2);margin-bottom:16px;overflow-x:auto}
+.tab{padding:8px 13px;font-size:12px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all 0.15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* METRICS */
+.metrics-row{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:16px}
+.metric{background:var(--bg2);border-radius:var(--radius);padding:9px 7px;text-align:center}
+.metric .num{font-size:19px;font-weight:700}
+.metric .lbl{font-size:9px;color:var(--text2);margin-top:2px}
+.metric .bar{height:3px;border-radius:2px;background:var(--border);margin-top:5px;overflow:hidden}
+.metric .fill{height:100%;background:var(--green);border-radius:2px;transition:width 0.7s}
+
+/* PROSE */
+.prose{font-size:13px;line-height:1.75;background:var(--bg2);padding:13px;border-radius:var(--radius);margin-bottom:14px}
+.section-label{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;margin-top:14px}
+
+/* PIPELINE */
+.pipeline-step{display:flex;gap:10px;padding:9px 12px;background:var(--bg2);border-radius:var(--radius);border-left:3px solid var(--green);margin-bottom:6px}
+.step-num{font-size:10px;font-weight:700;color:var(--green);min-width:16px;padding-top:2px}
+.step-title{font-size:12px;font-weight:600}
+.step-detail{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.5}
+
+/* INSTAGRAM */
+.caption-box{background:var(--bg2);padding:13px;border-radius:var(--radius);font-size:13px;line-height:1.75;margin-bottom:10px;position:relative;white-space:pre-wrap}
+.copy-btn{position:absolute;top:8px;right:8px;padding:3px 9px;font-size:10px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);cursor:pointer;color:var(--text2);font-family:inherit}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.tag{font-size:11px;padding:3px 8px;border-radius:10px;background:var(--green-light);color:var(--green-dark);font-weight:500}
+
+/* COMPARE */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.compare-card{background:var(--bg2);border-radius:var(--radius);padding:11px;border:0.5px solid var(--border)}
+.compare-card.current{border-color:var(--green);border-width:1.5px}
+.compare-card h4{font-size:12px;font-weight:600;margin-bottom:8px}
+.diff{font-size:11px;color:var(--text2);padding:3px 0;border-bottom:0.5px solid var(--border);line-height:1.4}
+.diff:last-child{border-bottom:none}
+
+/* EDITORIAL */
+.ed-item{display:flex;gap:9px;padding:7px 10px;background:var(--bg2);border-radius:var(--radius);margin-bottom:5px}
+.ed-day{font-size:11px;font-weight:700;color:var(--green);min-width:26px;padding-top:1px}
+.ed-body{font-size:12px;line-height:1.5}
+
+/* PDF BTN */
+.pdf-btn{display:flex;align-items:center;gap:8px;padding:9px 14px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);cursor:pointer;font-size:12px;color:var(--text);margin-top:14px;width:100%;font-family:inherit;transition:background 0.15s}
+.pdf-btn:hover{background:var(--bg2)}
+.pdf-btn i{color:var(--green);font-size:16px}
+.pdf-status{margin-left:auto;font-size:11px;color:var(--green);font-weight:500}
+
+/* POT BAR */
+.pot-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--bg2);border-radius:var(--radius);margin-bottom:18px;border:0.5px solid var(--border)}
+.pot-total{font-size:24px;font-weight:700;color:var(--green)}
+.pot-label{font-size:11px;color:var(--text2)}
+.pot-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.pill{font-size:11px;font-weight:500;padding:3px 10px;border-radius:12px;background:var(--green);color:#fff}
+
+/* PALETTE */
+.palette-row{display:flex;gap:5px;margin-bottom:14px}
+.swatch{height:32px;flex:1;border-radius:var(--radius)}
+
+/* ERROR */
+.err{background:rgba(226,75,74,0.08);border:0.5px solid rgba(226,75,74,0.3);border-radius:var(--radius);padding:11px 14px;font-size:12px;color:#A32D2D;margin-bottom:14px;display:none;line-height:1.6}
+
+/* ═══ ANALIZZATORE BAROCCO ═══ */
+.canvas-wrap{position:relative;margin-bottom:12px;display:none}
+canvas{width:100%;border-radius:var(--radius);display:block}
+#ov-canvas{position:absolute;top:0;left:0;width:100%;border-radius:var(--radius)}
+.map-controls{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.map-btn{padding:6px 12px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);cursor:pointer;font-size:11px;color:var(--text2);display:flex;align-items:center;gap:5px;font-family:inherit;transition:all 0.15s}
+.map-btn:hover{background:var(--bg2)}
+.map-btn.active{border-color:var(--gold);background:var(--gold-light);color:var(--gold-dark);font-weight:600}
+.diagnosi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+.diag-card{background:var(--bg2);border-radius:var(--radius);padding:9px 11px;border-left:3px solid #aaa}
+.diag-card.ok{border-left-color:#1D9E75}
+.diag-card.warn{border-left-color:#E07B2A}
+.diag-card.bad{border-left-color:#C0392B}
+.d-label{font-size:9px;color:var(--text2);margin-bottom:2px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+.d-val{font-size:12px;font-weight:600}
+.d-note{font-size:10px;color:var(--text2);margin-top:2px;line-height:1.4}
+.score-row{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.score-label{font-size:12px;color:var(--text2);width:125px;flex-shrink:0}
+.score-bar{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.score-fill{height:100%;border-radius:3px;transition:width 0.7s}
+.score-val{font-size:12px;font-weight:500;width:30px;text-align:right}
+.action-item{display:flex;gap:9px;padding:9px 12px;border-radius:var(--radius);margin-bottom:5px;align-items:flex-start}
+.action-item.add-light{background:rgba(250,199,117,0.12);border:0.5px solid rgba(186,117,23,0.25)}
+.action-item.add-shadow{background:rgba(80,60,40,0.06);border:0.5px solid var(--border)}
+.action-item.color{background:rgba(29,158,117,0.07);border:0.5px solid rgba(29,158,117,0.2)}
+.action-item.fix{background:rgba(192,57,43,0.06);border:0.5px solid rgba(192,57,43,0.2)}
+.action-icon{font-size:15px;margin-top:1px;flex-shrink:0}
+.action-icon.light{color:#BA7517}
+.action-icon.shadow{color:var(--text2)}
+.action-icon.color-ic{color:var(--green)}
+.action-icon.fix{color:#C0392B}
+.action-title{font-size:12px;font-weight:600;margin-bottom:2px}
+.action-desc{font-size:11px;color:var(--text2);line-height:1.5}
+.action-luminar{font-size:10px;color:var(--green-dark);margin-top:3px;font-style:italic}
+.ref-card{background:var(--bg2);border-radius:var(--radius-lg);padding:13px 15px;margin-bottom:8px;border:0.5px solid var(--border)}
+.ref-card .ref-match{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px}
+.ref-card .ref-match.top{background:rgba(29,158,117,0.12);color:var(--green-dark)}
+.ref-card .ref-match.good{background:rgba(186,117,23,0.12);color:var(--gold-dark)}
+.ref-card .ref-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.ref-card .ref-pittore{font-size:11px;color:var(--green-dark);margin-bottom:6px;font-weight:500}
+.ref-card .ref-desc{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:5px}
+.ref-card .ref-search{font-size:11px;color:var(--text2);font-style:italic;background:var(--bg);padding:5px 9px;border-radius:var(--radius);border:0.5px solid var(--border);margin-top:4px}
+.histo-wrap{height:46px;background:var(--bg2);border-radius:var(--radius);padding:5px;display:flex;align-items:flex-end;gap:1px;margin-bottom:4px}
+.histo-bar{flex:1;border-radius:1px 1px 0 0;min-height:2px;background:rgba(140,120,80,0.5)}
+.lum-track{height:7px;border-radius:4px;background:linear-gradient(to right,#000,#888,#fff);margin-bottom:3px;position:relative}
+.lum-dot{position:absolute;top:-4px;width:3px;height:15px;background:#E07B2A;border-radius:2px}
+.zone-note{font-size:11px;color:var(--text2);line-height:1.6;background:var(--bg2);padding:9px 12px;border-radius:var(--radius);margin-top:5px}
+.sintesi-box{background:var(--bg2);border-radius:var(--radius);padding:11px 13px;font-size:12px;line-height:1.6;margin-top:8px;border-left:3px solid var(--green)}
+
+@media(max-width:540px){
+  .metrics-row{grid-template-columns:repeat(3,1fr)}
+  .style-grid{grid-template-columns:1fr}
+  .compare-grid{grid-template-columns:1fr}
+  .diagnosi-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+    <div style="width:42px;height:42px;background:var(--green);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0"><i class="ti ti-camera"></i></div>
+    <div>
+      <div style="font-size:18px;font-weight:700">Agente Fotografico Pro</div>
+      <div style="font-size:12px;color:var(--text2)">Analisi AI · Workflow · Instagram · Analizzatore Barocco · PDF</div>
+    </div>
+  </div>
+
+  <!-- API KEY (condivisa) -->
+  <div class="card">
+    <div class="section-label" style="margin-top:0">Anthropic API Key</div>
+    <div class="api-row">
+      <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." autocomplete="off">
+      <button onclick="saveApiKey()">Salva</button>
+    </div>
+    <div class="api-note">Salvata nel browser · <a href="https://console.anthropic.com" style="color:var(--green)">console.anthropic.com</a></div>
+    <div class="api-ok" id="api-ok"><i class="ti ti-circle-check"></i> API key salvata</div>
+  </div>
+
+  <!-- NAV -->
+  <div class="main-nav">
+    <button class="nav-btn active" onclick="switchPage('agente')"><i class="ti ti-sparkles"></i> Agente Foto</button>
+    <button class="nav-btn" onclick="switchPage('barocco')"><i class="ti ti-sun"></i> Analizzatore Barocco</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PAGINA 1 — AGENTE FOTOGRAFICO          -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="page-agente" class="page active">
+
+    <div class="card">
+      <div class="section-label" style="margin-top:0">Foto da analizzare</div>
+      <div class="upload-zone" id="uz1">
+        <i class="ti ti-cloud-upload"></i>
+        <p>Trascina o clicca per caricare</p>
+        <small style="font-size:11px;color:var(--text3);display:block;margin-top:3px">JPG · PNG · WebP</small>
+        <input type="file" id="fi1" accept="image/*" style="display:none">
+      </div>
+      <img id="pi1" class="preview-img" alt="Anteprima">
+      <button class="nuova-btn" id="nb1" onclick="resetAgente()">↩ Analizza nuova foto</button>
+    </div>
+
+    <div class="card" id="style-card1" style="display:none">
+      <div class="section-label" style="margin-top:0">Seleziona stile</div>
+      <div class="style-grid">
+        <button class="style-btn" data-style="Pittorico-Barocco"><strong>Pittorico-Barocco</strong><span>Caravaggio · luce scultorea</span></button>
+        <button class="style-btn" data-style="B&W Architettura Drammatica"><strong>B&W Architettura</strong><span>Contrasto estremo · Roma barocca</span></button>
+        <button class="style-btn" data-style="Dark Forest Moody"><strong>Dark Forest Moody</strong><span>Foreste · nebbia · gotico</span></button>
+        <button class="style-btn" data-style="Luce Volumetrica"><strong>Luce Volumetrica</strong><span>Raggi · polvere · teatrale</span></button>
+        <button class="style-btn" data-style="Fantasy Soft"><strong>Fantasy Soft</strong><span>Pastelli · dream light</span></button>
+        <button class="style-btn" data-style="Nord Barocco"><strong>Nord Barocco</strong><span>Alpino · monocromatismo nordico</span></button>
+      </div>
+    </div>
+
+    <button class="analyze-btn" id="ab1" disabled onclick="runAgente()">
+      <i class="ti ti-sparkles"></i> Analizza foto
+    </button>
+
+    <div class="err" id="err1"></div>
+
+    <div id="res1" style="display:none">
+      <div class="pot-bar">
+        <div>
+          <div class="pot-label">Potenziale stimato</div>
+          <div class="pot-total" id="pt1">€0</div>
+          <div class="pot-sub" id="ps1"></div>
+        </div>
+        <span class="pill" id="bs1"></span>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="a1-analisi">Analisi</button>
+        <button class="tab" data-tab="a1-workflow">Workflow</button>
+        <button class="tab" data-tab="a1-farei">✦ Come lo farei io</button>
+        <button class="tab" data-tab="a1-instagram">Instagram</button>
+        <button class="tab" data-tab="a1-confronto">Confronta</button>
+        <button class="tab" data-tab="a1-editoriale">Editoriale</button>
+      </div>
+
+      <div id="tab-a1-analisi" class="tab-content active">
+        <div class="metrics-row" id="a1-metrics"></div>
+        <div class="section-label">Palette estratta</div>
+        <div class="palette-row" id="a1-palette"></div>
+        <div class="section-label">Analisi visiva</div>
+        <div class="prose" id="a1-analisi"></div>
+        <div class="section-label">Punti di forza / miglioramento</div>
+        <div class="prose" id="a1-strengths"></div>
+      </div>
+
+      <div id="tab-a1-workflow" class="tab-content">
+        <div class="section-label">Pipeline raccomandata</div>
+        <div id="a1-pipeline"></div>
+        <div class="section-label">Note tecniche</div>
+        <div class="prose" id="a1-wfnote"></div>
+        <button class="pdf-btn" id="pdf-wf1"><i class="ti ti-file-type-pdf"></i> Scarica Workflow PDF <span class="pdf-status" id="pws1"></span></button>
+      </div>
+
+      <div id="tab-a1-instagram" class="tab-content">
+        <div class="section-label">Caption pronta</div>
+        <div class="caption-box"><button class="copy-btn" id="cc1">Copia</button><span id="a1-caption"></span></div>
+        <div class="section-label">Hashtag</div>
+        <div class="tags" id="a1-hashtags"></div>
+        <div class="section-label">Timing</div>
+        <div class="prose" id="a1-timing"></div>
+        <div class="section-label">Specifiche export</div>
+        <div class="prose" id="a1-export"></div>
+        <button class="pdf-btn" id="pdf-ig1"><i class="ti ti-file-type-pdf"></i> Scarica Scheda Instagram PDF <span class="pdf-status" id="pig1"></span></button>
+      </div>
+
+      <div id="tab-a1-farei" class="tab-content">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;padding:10px 13px;background:var(--bg2);border-radius:var(--radius);border-left:3px solid var(--green)">Simulazione del tuo workflow completo su questa foto specifica — Lightroom → MTC Pro → MTC Density → MTC ChromaWarp → Dodge & Burn → Luminar Neo → Topaz AI</div>
+        <div id="a1-farei-steps"></div>
+        <button class="pdf-btn" id="pdf-farei1"><i class="ti ti-file-type-pdf"></i> Scarica "Come lo farei io" PDF <span class="pdf-status" id="pf1"></span></button>
+      </div>
+
+      <div id="tab-a1-confronto" class="tab-content">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px" id="a1-cmp-intro"></div>
+        <div class="compare-grid" id="a1-cmp-grid"></div>
+        <div class="section-label">Raccomandazione</div>
+        <div class="prose" id="a1-cmp-rec"></div>
+      </div>
+
+      <div id="tab-a1-editoriale" class="tab-content">
+        <div class="section-label">Piano settimanale</div>
+        <div id="a1-editorial"></div>
+        <button class="pdf-btn" id="pdf-ed1"><i class="ti ti-file-type-pdf"></i> Scarica Piano Editoriale PDF <span class="pdf-status" id="ped1"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PAGINA 2 — ANALIZZATORE BAROCCO        -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="page-barocco" class="page">
+
+    <div class="card">
+      <div class="section-label" style="margin-top:0">Carica il ritratto</div>
+      <div class="upload-zone" id="uz2">
+        <i class="ti ti-camera"></i>
+        <p>Carica un ritratto — analizzo luce, ombre, colori e ti dico quale dipinto scaricare per il trasferimento colore in Luminar Neo</p>
+        <small style="font-size:11px;color:var(--text3);display:block;margin-top:3px">JPG · PNG · WebP</small>
+        <input type="file" id="fi2" accept="image/*" style="display:none">
+      </div>
+      <div class="canvas-wrap" id="cw2">
+        <canvas id="mc2"></canvas>
+        <canvas id="ov-canvas"></canvas>
+      </div>
+      <button class="nuova-btn" id="nb2" onclick="resetBarocco()">↩ Analizza nuovo ritratto</button>
+    </div>
+
+    <div id="map-controls-wrap" style="display:none">
+      <div class="map-controls">
+        <button class="map-btn active" id="mb-orig" onclick="setOverlay('none')"><i class="ti ti-photo"></i> Originale</button>
+        <button class="map-btn" id="mb-luce" onclick="setOverlay('luce')"><i class="ti ti-sun"></i> Mappa luci</button>
+        <button class="map-btn" id="mb-ombre" onclick="setOverlay('ombre')"><i class="ti ti-moon"></i> Mappa ombre</button>
+        <button class="map-btn" id="mb-colori" onclick="setOverlay('colori')"><i class="ti ti-palette"></i> Colori saturi</button>
+      </div>
+    </div>
+
+    <button class="analyze-btn" id="ab2" disabled onclick="runBarocco()" style="background:var(--gold-dark);box-shadow:0 2px 8px rgba(184,134,11,0.25)">
+      <i class="ti ti-sparkles"></i> Analizza ritratto
+    </button>
+
+    <div class="err" id="err2"></div>
+
+    <div id="res2" style="display:none">
+
+      <div class="section-label">Diagnosi barocca</div>
+      <div class="diagnosi-grid" id="b-diagnosi"></div>
+
+      <div class="section-label">Punteggi</div>
+      <div id="b-scores"></div>
+
+      <div class="section-label">Luminosità e istogramma</div>
+      <div class="lum-track"><div class="lum-dot" id="b-lumdot"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-bottom:5px"><span>Nero</span><span>Mezzitoni</span><span>Bianco</span></div>
+      <div class="histo-wrap" id="b-histo"></div>
+      <div class="zone-note" id="b-zone"></div>
+
+      <div class="section-label">Palette estratta</div>
+      <div class="palette-row" id="b-palette"></div>
+      <div style="font-size:10px;color:var(--text2);margin-bottom:5px">Palette barocca ideale:</div>
+      <div class="palette-row">
+        <div class="swatch" style="background:#120a02"></div>
+        <div class="swatch" style="background:#3d2506"></div>
+        <div class="swatch" style="background:#7a4a1e"></div>
+        <div class="swatch" style="background:#b07840"></div>
+        <div class="swatch" style="background:#d4a87a"></div>
+        <div class="swatch" style="background:#e8d0a8"></div>
+        <div class="swatch" style="background:#8b1a1a"></div>
+      </div>
+
+      <div class="section-label">Dipinti di riferimento per trasferimento colore Luminar Neo</div>
+      <div id="b-refs"></div>
+
+      <div class="section-label">Cosa fare in Luminar Neo</div>
+      <div id="b-actions"></div>
+
+      <div class="sintesi-box" id="b-sintesi" style="display:none"></div>
+
+    </div>
+  </div>
+
+</div><!-- end wrapper -->
+
+<script>
+// ── SHARED STATE ──
+let apiKey = localStorage.getItem('agente_api_key') || '';
+if (apiKey) { document.getElementById('api-key-input').value = apiKey; document.getElementById('api-ok').style.display = 'block'; }
+
+function saveApiKey() {
+  apiKey = document.getElementById('api-key-input').value.trim();
+  if (!apiKey) return;
+  localStorage.setItem('agente_api_key', apiKey);
+  document.getElementById('api-ok').style.display = 'block';
+  checkReady1(); checkReady2();
+}
+
+function switchPage(p) {
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ── TABS ──
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    const parent = t.closest('.tab-content')?.parentElement || t.parentElement.parentElement;
+    t.parentElement.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    const tabId = 'tab-' + t.dataset.tab;
+    parent.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(tabId)?.classList.add('active');
+  });
+});
+
+// ── AGENTE FOTOGRAFICO ──
+let imgB64_1 = null, imgMime_1 = 'image/jpeg', selStyle_1 = null, data1 = null;
+
+const uz1 = document.getElementById('uz1');
+const fi1 = document.getElementById('fi1');
+uz1.addEventListener('click', () => fi1.click());
+fi1.addEventListener('change', e => handleFile1(e.target.files[0]));
+uz1.addEventListener('dragover', e => e.preventDefault());
+uz1.addEventListener('drop', e => { e.preventDefault(); handleFile1(e.dataTransfer.files[0]); });
+
+function handleFile1(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  imgMime_1 = file.type;
+  const r = new FileReader();
+  r.onload = e => {
+    imgB64_1 = e.target.result.split(',')[1];
+    document.getElementById('pi1').src = e.target.result;
+    document.getElementById('pi1').style.display = 'block';
+    uz1.style.display = 'none';
+    document.getElementById('nb1').style.display = 'block';
+    document.getElementById('style-card1').style.display = 'block';
+    extractPalette1(e.target.result);
+    checkReady1();
+  };
+  r.readAsDataURL(file);
+}
+
+function extractPalette1(src) {
+  const c = document.createElement('canvas'), ctx = c.getContext('2d'), img = new Image();
+  img.onload = () => {
+    c.width = 80; c.height = 80;
+    ctx.drawImage(img, 0, 0, 80, 80);
+    const px = ctx.getImageData(0, 0, 80, 80).data;
+    const step = Math.floor(px.length / 4 / 6);
+    const cols = [];
+    for (let i = 0; i < 6; i++) { const idx = i * step * 4; cols.push(`rgb(${px[idx]},${px[idx+1]},${px[idx+2]})`); }
+    const row = document.getElementById('a1-palette');
+    if (row) row.innerHTML = cols.map(c => `<div class="swatch" style="background:${c}"></div>`).join('');
+  };
+  img.src = src;
+}
+
+document.querySelectorAll('#style-card1 .style-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#style-card1 .style-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selStyle_1 = btn.dataset.style;
+    checkReady1();
+  });
+});
+
+function checkReady1() { document.getElementById('ab1').disabled = !(imgB64_1 && selStyle_1 && apiKey); }
+
+function resetAgente() {
+  imgB64_1 = null; selStyle_1 = null; data1 = null;
+  document.getElementById('pi1').style.display = 'none';
+  uz1.style.display = 'block';
+  document.getElementById('nb1').style.display = 'none';
+  document.getElementById('style-card1').style.display = 'none';
+  document.getElementById('res1').style.display = 'none';
+  document.getElementById('err1').style.display = 'none';
+  document.getElementById('ab1').disabled = true;
+  fi1.value = '';
+  document.querySelectorAll('#style-card1 .style-btn').forEach(b => b.classList.remove('active'));
+}
+
+async function runAgente() {
+  const btn = document.getElementById('ab1');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"><i class="ti ti-loader"></i></span> Analisi...';
+  document.getElementById('err1').style.display = 'none';
+  document.getElementById('res1').style.display = 'none';
+
+  const sys = `Sei un assistente fotografico esperto di Andrea, fotografo con Canon 5D Mark III. Stili: Pittorico-Barocco, B&W Architettura Drammatica, Dark Forest Moody, Luce Volumetrica, Fantasy Soft, Nord Barocco (alpino romantico + monocromatismo nordico). Workflow: Lightroom→PS(MTC Pro→MTC Density→MTC ChromaWarp→D&B)→Luminar Neo→Topaz AI→LR export.
+Rispondi SOLO con JSON valido senza markdown:
+{"style":"nome","pot":{"foto":120,"preset":35,"pdf":25},"metrics":[{"l":"Stock","s":7},{"l":"Originalità","s":8},{"l":"Qualità tec.","s":9},{"l":"Stampa","s":6},{"l":"Social","s":8}],"analisi":"testo","strengths":"testo","pipeline":[{"n":"1","sw":"sw","az":"az","det":"det"}],"wf_note":"testo","farei":[{"sw":"Lightroom","titolo":"Prima impostazione base","desc":"cosa farei esattamente con valori numerici precisi"},{"sw":"MTC Pro","titolo":"Color web e contrasto","desc":"cosa farei con MTC Pro su questa foto — valori esatti"},{"sw":"MTC Density","titolo":"Densità e struttura","desc":"cosa farei con MTC Density — valori esatti"},{"sw":"MTC ChromaWarp","titolo":"Viraggio cromatico","desc":"cosa farei con ChromaWarp — preset e valori"},{"sw":"Dodge & Burn","titolo":"Scultura luce e ombra","desc":"dove aggiungerei luce e dove toglierla su questa foto specifica"},{"sw":"Luminar Neo","titolo":"Atmosfera e pelle","desc":"cosa farei in Luminar Neo — Relight AI, Skin AI, Color Grading con valori"},{"sw":"Topaz AI","titolo":"Dettaglio finale","desc":"DeNoise o Sharpen — impostazioni per questa foto"},{"sw":"Export finale","titolo":"Export e destinazione","desc":"formato, dimensioni, profilo colore per stock e Instagram"}],"caption":"caption","hashtags":["h1","h2"],"timing":"testo","export":"testo","cmp_style":"stile","cmp_cur":["p1","p2","p3"],"cmp_alt":["p1","p2","p3"],"cmp_rec":"testo","editorial":[{"d":"Lun","f":"Post","t":"18:30","c":"contenuto"}]}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 4000, system: sys, messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: imgMime_1, data: imgB64_1 } }, { type: 'text', text: 'Stile: ' + selStyle_1 + '. Analizza. Rispondi SOLO con JSON.' }] }] })
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const raw = await resp.json();
+    const txt = (raw.content || []).map(i => i.text || '').join('');
+    const m = txt.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error('JSON non trovato');
+    data1 = JSON.parse(m[0]);
+    renderAgente(data1);
+  } catch(e) {
+    const eb = document.getElementById('err1');
+    eb.textContent = 'Errore: ' + e.message;
+    eb.style.display = 'block';
+  }
+  btn.innerHTML = '<i class="ti ti-sparkles"></i> Analizza foto';
+  btn.disabled = false;
+}
+
+function renderAgente(d) {
+  const total = (d.pot?.foto||0)+(d.pot?.preset||0)+(d.pot?.pdf||0);
+  document.getElementById('pt1').textContent = '€'+total;
+  document.getElementById('ps1').textContent = 'Foto €'+(d.pot?.foto||0)+' · Preset €'+(d.pot?.preset||0)+' · PDF €'+(d.pot?.pdf||0);
+  document.getElementById('bs1').textContent = d.style||selStyle_1;
+  const mr = document.getElementById('a1-metrics');
+  mr.innerHTML = (d.metrics||[]).map(m => `<div class="metric"><div class="num">${m.s}/10</div><div class="lbl">${m.l}</div><div class="bar"><div class="fill" style="width:${m.s*10}%"></div></div></div>`).join('');
+  document.getElementById('a1-analisi').textContent = d.analisi||'';
+  document.getElementById('a1-strengths').textContent = d.strengths||'';
+  const ps = document.getElementById('a1-pipeline');
+  ps.innerHTML = (d.pipeline||[]).map(p => `<div class="pipeline-step"><div class="step-num">${p.n}</div><div><div class="step-title">${p.sw} — ${p.az}</div><div class="step-detail">${p.det}</div></div></div>`).join('');
+  document.getElementById('a1-wfnote').textContent = d.wf_note||'';
+  document.getElementById('a1-caption').textContent = d.caption||'';
+  document.getElementById('cc1').onclick = () => { navigator.clipboard.writeText(d.caption||'').then(()=>{ document.getElementById('cc1').textContent='Copiato!'; setTimeout(()=>document.getElementById('cc1').textContent='Copia',1800); }); };
+  document.getElementById('a1-hashtags').innerHTML = (d.hashtags||[]).map(h=>`<span class="tag">${h.startsWith('#')?h:'#'+h}</span>`).join('');
+  document.getElementById('a1-timing').textContent = d.timing||'';
+  document.getElementById('a1-export').textContent = d.export||'';
+  document.getElementById('a1-cmp-intro').textContent = 'Confronto: "'+( d.style||selStyle_1)+'" vs "'+( d.cmp_style||'')+'"';
+  document.getElementById('a1-cmp-grid').innerHTML = `<div class="compare-card current"><h4>${d.style||selStyle_1}</h4>${(d.cmp_cur||[]).map(x=>`<div class="diff">${x}</div>`).join('')}</div><div class="compare-card"><h4>${d.cmp_style||''}</h4>${(d.cmp_alt||[]).map(x=>`<div class="diff">${x}</div>`).join('')}</div>`;
+  document.getElementById('a1-cmp-rec').textContent = d.cmp_rec||'';
+  document.getElementById('a1-editorial').innerHTML = (d.editorial||[]).map(e=>`<div class="ed-item"><span class="ed-day">${e.d}</span><span class="ed-body"><strong>${e.f}</strong> · ${e.t} — ${e.c}</span></div>`).join('');
+  // Come lo farei io
+  const swColors = {'Lightroom':'#1473E6','MTC Pro':'#7B3FA0','MTC Density':'#5C4A1E','MTC ChromaWarp':'#8B2020','Dodge & Burn':'#444','Luminar Neo':'#1D9E75','Topaz AI':'#0F6E56','Export finale':'#666'};
+  const fs = document.getElementById('a1-farei-steps');
+  fs.innerHTML = (d.farei||[]).map(f => {
+    const col = swColors[f.sw] || '#1D9E75';
+    return `<div style="display:flex;gap:10px;padding:11px 13px;background:var(--bg2);border-radius:var(--radius);border-left:3px solid ${col};margin-bottom:7px">
+      <div style="min-width:90px;font-size:10px;font-weight:700;color:${col};padding-top:1px;line-height:1.3">${f.sw}</div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px">${f.titolo}</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.6">${f.desc}</div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('pdf-farei1').onclick = () => makePDF1('farei');
+  document.getElementById('pdf-wf1').onclick = () => makePDF1('workflow');
+  document.getElementById('pdf-ig1').onclick = () => makePDF1('instagram');
+  document.getElementById('pdf-ed1').onclick = () => makePDF1('editorial');
+  document.getElementById('res1').style.display = 'block';
+  document.getElementById('res1').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── ANALIZZATORE BAROCCO ──
+let imgB64_2=null, imgMime_2='image/jpeg', imgData2=null;
+const uz2=document.getElementById('uz2');
+const fi2=document.getElementById('fi2');
+const mc2=document.getElementById('mc2');
+const ov2=document.getElementById('ov-canvas');
+const mX2=mc2.getContext('2d');
+const oX2=ov2.getContext('2d');
+
+uz2.addEventListener('click',()=>fi2.click());
+fi2.addEventListener('change',e=>handleFile2(e.target.files[0]));
+uz2.addEventListener('dragover',e=>e.preventDefault());
+uz2.addEventListener('drop',e=>{e.preventDefault();handleFile2(e.dataTransfer.files[0]);});
+
+function handleFile2(file){
+  if(!file||!file.type.startsWith('image/'))return;
+  imgMime_2=file.type;
+  const r=new FileReader();
+  r.onload=e=>{
+    imgB64_2=e.target.result.split(',')[1];
+    const img=new Image();
+    img.onload=()=>{
+      const mw=680,mh=420;
+      let w=img.width,h=img.height;
+      if(w>mw){h=h*mw/w;w=mw;} if(h>mh){w=w*mh/h;h=mh;}
+      w=Math.round(w);h=Math.round(h);
+      mc2.width=w;mc2.height=h;ov2.width=w;ov2.height=h;
+      mX2.drawImage(img,0,0,w,h);
+      imgData2=mX2.getImageData(0,0,w,h);
+      uz2.style.display='none';
+      document.getElementById('cw2').style.display='block';
+      document.getElementById('map-controls-wrap').style.display='block';
+      document.getElementById('nb2').style.display='block';
+      computeLocal2();
+      checkReady2();
+    };
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function computeLocal2(){
+  const px=imgData2.data,n=px.length/4;
+  let sumL=0,dark=0,light=0,mid=0;
+  const histL=new Array(32).fill(0);
+  const samples=[];
+  for(let i=0;i<px.length;i+=4){
+    const r=px[i],g=px[i+1],b=px[i+2];
+    const l=0.299*r+0.587*g+0.114*b;
+    sumL+=l; histL[Math.min(31,Math.floor(l/8))]++;
+    if(l<64)dark++;else if(l>192)light++;else mid++;
+    if(Math.random()<0.003)samples.push([r,g,b]);
+  }
+  const avgL=sumL/n;
+  window._ld2={avgL,dark:Math.round(dark/n*100),light:Math.round(light/n*100),mid:Math.round(mid/n*100),histL,samples};
+  document.getElementById('b-lumdot').style.left=Math.round(avgL/255*100)+'%';
+  const hw=document.getElementById('b-histo');
+  const mx=Math.max(...histL);
+  hw.innerHTML=histL.map(v=>`<div class="histo-bar" style="height:${Math.round(v/mx*100)}%"></div>`).join('');
+  document.getElementById('b-zone').textContent=`Zone scure ${window._ld2.dark}% · Mezzitoni ${window._ld2.mid}% · Luci ${window._ld2.light}% · Luminosità media ${Math.round(avgL)}/255 — Barocco ideale: 50–65% scure, 25–35% mezzitoni, 10–20% luci.`;
+  const centers=kmeans(samples,7);
+  document.getElementById('b-palette').innerHTML=centers.map(c=>`<div class="swatch" style="background:rgb(${c[0]},${c[1]},${c[2]})"></div>`).join('');
+}
+
+function kmeans(pts,k){
+  if(pts.length<k)return pts;
+  let centers=Array.from({length:k},(_,i)=>pts[Math.floor(i*pts.length/k)]);
+  for(let it=0;it<10;it++){
+    const cl=Array.from({length:k},()=>[]);
+    for(const p of pts){let best=0,bd=Infinity;for(let j=0;j<k;j++){const d=(p[0]-centers[j][0])**2+(p[1]-centers[j][1])**2+(p[2]-centers[j][2])**2;if(d<bd){bd=d;best=j;}}cl[best].push(p);}
+    for(let j=0;j<k;j++){if(!cl[j].length)continue;centers[j]=[Math.round(cl[j].reduce((s,p)=>s+p[0],0)/cl[j].length),Math.round(cl[j].reduce((s,p)=>s+p[1],0)/cl[j].length),Math.round(cl[j].reduce((s,p)=>s+p[2],0)/cl[j].length)];}
+  }
+  return centers;
+}
+
+function setOverlay(type){
+  document.querySelectorAll('.map-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('mb-'+(type==='none'?'orig':type)).classList.add('active');
+  oX2.clearRect(0,0,ov2.width,ov2.height);
+  if(type==='none')return;
+  const px=imgData2.data,w=imgData2.width,h=imgData2.height;
+  const out=oX2.createImageData(w,h);
+  for(let i=0;i<px.length;i+=4){
+    const r=px[i],g=px[i+1],b=px[i+2];
+    const l=0.299*r+0.587*g+0.114*b;
+    if(type==='luce'&&l>155){out.data[i]=255;out.data[i+1]=200;out.data[i+2]=60;out.data[i+3]=Math.round((l-155)/100*200);}
+    else if(type==='ombre'&&l<75){out.data[i]=100;out.data[i+1]=0;out.data[i+2]=200;out.data[i+3]=Math.round((75-l)/75*220);}
+    else if(type==='colori'){const mx=Math.max(r,g,b)/255,mn=Math.min(r,g,b)/255,sat=mx>0?(mx-mn)/mx:0;if(sat>0.35){out.data[i]=r;out.data[i+1]=g;out.data[i+2]=b;out.data[i+3]=210;}}
+    else{out.data[i+3]=0;}
+  }
+  oX2.putImageData(out,0,0);
+}
+
+function checkReady2(){ document.getElementById('ab2').disabled=!(imgB64_2&&apiKey); }
+
+function resetBarocco(){
+  imgB64_2=null;imgData2=null;
+  mX2.clearRect(0,0,mc2.width,mc2.height);oX2.clearRect(0,0,ov2.width,ov2.height);
+  document.getElementById('cw2').style.display='none';
+  document.getElementById('map-controls-wrap').style.display='none';
+  document.getElementById('nb2').style.display='none';
+  document.getElementById('res2').style.display='none';
+  document.getElementById('err2').style.display='none';
+  uz2.style.display='block';fi2.value='';
+  document.getElementById('ab2').disabled=true;
+  document.querySelectorAll('.map-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('mb-orig').classList.add('active');
+}
+
+async function runBarocco(){
+  const btn=document.getElementById('ab2');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spin"><i class="ti ti-loader"></i></span> Analisi...';
+  document.getElementById('err2').style.display='none';
+  document.getElementById('res2').style.display='none';
+  const d=window._ld2;
+  const sys=`Sei un esperto di fotografia pittorico-barocca (Caravaggio, Rembrandt, Vermeer, De La Tour) e di Luminar Neo con Trasferimento Colore. Analizza questo ritratto.
+Dati tecnici: Zone scure ${d.dark}%, mezzitoni ${d.mid}%, luci ${d.light}%, luminosità media ${Math.round(d.avgL)}/255.
+Rispondi SOLO con JSON valido senza markdown:
+{"diagnosi":[{"label":"Luce direzionale","stato":"ok|warn|bad","valore":"breve","nota":"1 frase"},{"label":"Profondità ombre","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Sfondo","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Contrasto barocco","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Tono pelle","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Accento cromatico","stato":"ok|warn|bad","valore":"breve","nota":"frase"}],"scores":[{"label":"Luce scultorea","val":7},{"label":"Profondità nero","val":6},{"label":"Tono pittorico","val":5},{"label":"Contrasto barocco","val":8},{"label":"Pelle organica","val":7},{"label":"Composizione","val":8}],"riferimenti":[{"match":"top","opera":"nome opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"2 frasi","cosa_prendere":"cosa copiare","search_query":"query Google Images"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"}],"azioni":[{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"cosa fare","luminar":"tool Luminar con valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"}],"sintesi":"2-3 righe sintesi"}`;
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3500,system:sys,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:imgMime_2,data:imgB64_2}},{type:'text',text:'Analizza questo ritratto per il workflow Pittorico-Barocco con Luminar Neo. Dimmi quale dipinto scaricare per il trasferimento colore.'}]}]})});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    const raw=await resp.json();
+    const txt=(raw.content||[]).map(i=>i.text||'').join('');
+    const m=txt.match(/\{[\s\S]*\}/);
+    if(!m)throw new Error('JSON non trovato');
+    renderBarocco(JSON.parse(m[0]));
+  }catch(e){
+    const eb=document.getElementById('err2');
+    eb.textContent='Errore: '+e.message;
+    eb.style.display='block';
+  }
+  btn.innerHTML='<i class="ti ti-sparkles"></i> Analizza ritratto';
+  btn.disabled=false;
+}
+
+function renderBarocco(d){
+  const dg=document.getElementById('b-diagnosi');
+  dg.innerHTML=(d.diagnosi||[]).map(x=>`<div class="diag-card ${x.stato}"><div class="d-label">${x.label}</div><div class="d-val">${x.valore}</div><div class="d-note">${x.nota}</div></div>`).join('');
+  const ss=document.getElementById('b-scores');
+  ss.innerHTML=(d.scores||[]).map(s=>{const col=s.val>=7?'#1D9E75':s.val>=5?'#E07B2A':'#C0392B';return `<div class="score-row"><div class="score-label">${s.label}</div><div class="score-bar"><div class="score-fill" style="width:${Math.round(s.val*10)}%;background:${col}"></div></div><div class="score-val">${s.val}/10</div></div>`;}).join('');
+  const rc=document.getElementById('b-refs');
+  rc.innerHTML=(d.riferimenti||[]).map(r=>`<div class="ref-card"><div class="ref-match ${r.match}">${r.match==='top'?'Riferimento ideale':'Ottima alternativa'}</div><div class="ref-title">${r.opera}</div><div class="ref-pittore">${r.pittore} · ${r.anno} · ${r.museo}</div><div class="ref-desc"><strong>Perché:</strong> ${r.perche}</div><div class="ref-desc"><strong>Cosa copiare:</strong> ${r.cosa_prendere}</div><div style="font-size:10px;color:var(--text3);margin-top:6px">Cerca su Google Images:</div><div class="ref-search">${r.search_query}</div></div>`).join('');
+  const icoMap={sun:'ti-sun',moon:'ti-moon',palette:'ti-palette','alert-circle':'ti-alert-circle'};
+  const colMap={'add-light':'light','add-shadow':'shadow','color':'color-ic','fix':'fix'};
+  document.getElementById('b-actions').innerHTML=(d.azioni||[]).map(a=>`<div class="action-item ${a.tipo}"><i class="ti ${icoMap[a.icona]||'ti-sparkles'} action-icon ${colMap[a.tipo]||'color-ic'}"></i><div><div class="action-title">${a.titolo}</div><div class="action-desc">${a.desc}</div><div class="action-luminar"><i class="ti ti-adjustments-horizontal" style="font-size:10px"></i> ${a.luminar}</div></div></div>`).join('');
+  if(d.sintesi){const sb=document.getElementById('b-sintesi');sb.textContent=d.sintesi;sb.style.display='block';}
+  document.getElementById('res2').style.display='block';
+  document.getElementById('res2').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── PDF AGENTE ──
+function makePDF1(type){
+  if(!data1||!window.jspdf)return;
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const m=18,pw=210,cw=pw-m*2;let y=m;
+  const chk=()=>{if(y>272){doc.addPage();y=m;}};
+  const ttl=(t,sz=14,rgb=[15,110,86])=>{doc.setFont(undefined,'bold');doc.setFontSize(sz);doc.setTextColor(...rgb);doc.text(t,m,y);y+=sz*0.45+4;chk();};
+  const bdy=(t,sz=9,rgb=[40,40,40])=>{doc.setFont(undefined,'normal');doc.setFontSize(sz);doc.setTextColor(...rgb);const ls=doc.splitTextToSize(t,cw);doc.text(ls,m,y);y+=ls.length*(sz*0.42+1)+3;chk();};
+  const sep=()=>{doc.setDrawColor(210,210,210);doc.line(m,y,pw-m,y);y+=5;chk();};
+  const box=(lbl,txt,rgb=[240,249,245])=>{const ls=doc.splitTextToSize(txt,cw-10);const h=ls.length*(9*0.42+1)+14;doc.setFillColor(...rgb);doc.roundedRect(m,y,cw,h,2,2,'F');doc.setFont(undefined,'bold');doc.setFontSize(8);doc.setTextColor(100,100,100);doc.text(lbl.toUpperCase(),m+5,y+6);doc.setFont(undefined,'normal');doc.setFontSize(9);doc.setTextColor(40,40,40);doc.text(ls,m+5,y+12);y+=h+5;chk();};
+
+  if(type==='workflow'){
+    ttl('Workflow di Post-Produzione',16);bdy('Stile: '+(data1.style||selStyle_1)+' — Agente Fotografico Pro',9,[100,100,100]);sep();ttl('Pipeline',12);
+    (data1.pipeline||[]).forEach(p=>{const txt=p.sw+' — '+p.az+': '+p.det;const ls=doc.splitTextToSize(txt,cw-18);const h=ls.length*(9*0.42+1)+12;doc.setFillColor(240,249,245);doc.roundedRect(m,y,cw,h,2,2,'F');doc.setFont(undefined,'bold');doc.setFontSize(9);doc.setTextColor(15,110,86);doc.text(p.n+'.',m+4,y+7);doc.setFont(undefined,'normal');doc.setFontSize(9);doc.setTextColor(40,40,40);doc.text(ls,m+13,y+7);y+=h+4;chk();});
+    sep();box('Note tecniche',data1.wf_note||'');sep();ttl('Metriche',12);(data1.metrics||[]).forEach(m2=>bdy(m2.l+': '+m2.s+'/10',9,[60,60,60]));sep();bdy('Potenziale: Foto €'+(data1.pot?.foto||0)+' · Preset €'+(data1.pot?.preset||0)+' · PDF €'+(data1.pot?.pdf||0),9,[15,110,86]);
+    doc.save('workflow_fotografico.pdf');showPs('pws1');
+  }else if(type==='instagram'){
+    ttl('Scheda Instagram',16);bdy('Stile: '+(data1.style||selStyle_1),9,[100,100,100]);sep();box('Caption',data1.caption||'');sep();ttl('Hashtag',12);bdy((data1.hashtags||[]).map(h=>h.startsWith('#')?h:'#'+h).join('  '),9);sep();box('Timing',data1.timing||'');sep();box('Specifiche export',data1.export||'');
+    doc.save('scheda_instagram.pdf');showPs('pig1');
+  }else if(type==='editorial'){
+    ttl('Piano Editoriale Settimanale',16);bdy('Stile: '+(data1.style||selStyle_1),9,[100,100,100]);sep();
+    (data1.editorial||[]).forEach(e=>{const txt=e.f+' · '+e.t+' — '+e.c;const ls=doc.splitTextToSize(txt,cw-18);const h=ls.length*(9*0.42+1)+12;doc.setFillColor(240,249,245);doc.roundedRect(m,y,cw,h,2,2,'F');doc.setFont(undefined,'bold');doc.setFontSize(10);doc.setTextColor(15,110,86);doc.text(e.d,m+4,y+8);doc.setFont(undefined,'normal');doc.setFontSize(9);doc.setTextColor(40,40,40);doc.text(ls,m+18,y+8);y+=h+4;chk();});
+    doc.save('piano_editoriale.pdf');showPs('ped1');
+  }else if(type==='farei'){
+    ttl('Come lo farei io — Workflow Completo',16);
+    bdy('Stile: '+(data1.style||selStyle_1)+' — Simulazione workflow Andrea · Canon EOS 5D Mark III',9,[100,100,100]);
+    sep();
+    const swC={'Lightroom':[20,80,200],'MTC Pro':[123,63,160],'MTC Density':[92,74,30],'MTC ChromaWarp':[139,32,32],'Dodge & Burn':[60,60,60],'Luminar Neo':[15,110,86],'Topaz AI':[15,80,60],'Export finale':[100,100,100]};
+    (data1.farei||[]).forEach(f=>{
+      const c=swC[f.sw]||[15,110,86];
+      const ls=doc.splitTextToSize(f.desc,cw-28);
+      const h=ls.length*(9*0.42+1)+18;
+      doc.setFillColor(245,245,243);doc.roundedRect(m,y,cw,h,2,2,'F');
+      doc.setFillColor(...c);doc.roundedRect(m,y,22,h,2,2,'F');
+      doc.setFont(undefined,'bold');doc.setFontSize(7);doc.setTextColor(255,255,255);
+      const swLines=doc.splitTextToSize(f.sw,18);
+      doc.text(swLines,m+11,y+8,{align:'center'});
+      doc.setFont(undefined,'bold');doc.setFontSize(9);doc.setTextColor(...c);
+      doc.text(f.titolo,m+26,y+7);
+      doc.setFont(undefined,'normal');doc.setFontSize(9);doc.setTextColor(40,40,40);
+      doc.text(ls,m+26,y+13);
+      y+=h+4;chk();
+    });
+    doc.save('come_lo_farei_io.pdf');showPs('pf1');
+  }
+}
+
+function showPs(id){const el=document.getElementById(id);el.textContent='✓ Scaricato';setTimeout(()=>el.textContent='',3000);}
+</script>
+</body>
+</html>
