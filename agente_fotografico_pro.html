@@ -70,6 +70,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .analyze-btn:disabled{background:var(--bg3);color:var(--text3);cursor:not-allowed;box-shadow:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{animation:spin 1s linear infinite;display:inline-block}
+.analyze-btn:not(:disabled):active{transform:scale(0.98)}
+.analyze-btn{transition:background 0.15s,transform 0.1s}
 
 /* TABS */
 .tabs{display:flex;border-bottom:0.5px solid var(--border2);margin-bottom:16px;overflow-x:auto}
@@ -278,6 +280,8 @@ canvas{width:100%;border-radius:var(--radius);display:block}
         <div class="metrics-row" id="a1-metrics"></div>
         <div class="section-label">Palette estratta</div>
         <div class="palette-row" id="a1-palette"></div>
+        <div class="section-label">Potenziale per piattaforma</div>
+        <div id="a1-stock-row" style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap"></div>
         <div class="section-label">Analisi visiva</div>
         <div class="prose" id="a1-analisi"></div>
         <div class="section-label">Punti di forza / miglioramento</div>
@@ -295,7 +299,7 @@ canvas{width:100%;border-radius:var(--radius);display:block}
       <div id="tab-a1-instagram" class="tab-content">
         <div class="section-label">Caption pronta</div>
         <div class="caption-box"><button class="copy-btn" id="cc1">Copia</button><span id="a1-caption"></span></div>
-        <div class="section-label">Hashtag</div>
+        <div class="section-label" style="display:flex;align-items:center;justify-content:space-between">Hashtag <button id="copy-hashtags-btn" style="font-size:10px;padding:2px 8px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);cursor:pointer;color:var(--text2);font-family:inherit">Copia tutti</button></div>
         <div class="tags" id="a1-hashtags"></div>
         <div class="section-label">Timing</div>
         <div class="prose" id="a1-timing"></div>
@@ -334,7 +338,7 @@ canvas{width:100%;border-radius:var(--radius);display:block}
       <div class="section-label" style="margin-top:0">Carica il ritratto</div>
       <div class="upload-zone" id="uz2">
         <i class="ti ti-camera"></i>
-        <p>Carica un ritratto — analizzo luce, ombre, colori e ti dico quale dipinto scaricare per il trasferimento colore in Luminar Neo</p>
+        <p>Carica una foto — ritratti, paesaggi, foreste, architettura</p><small style="font-size:10px;color:var(--text3);display:block;margin-top:3px">Analizzo luce, ombre, colori · dipinti di riferimento per trasferimento colore · workflow LR → MTC → Luminar</small>
         <small style="font-size:11px;color:var(--text3);display:block;margin-top:3px">JPG · PNG · WebP</small>
         <input type="file" id="fi2" accept="image/*" style="display:none">
       </div>
@@ -394,6 +398,8 @@ canvas{width:100%;border-radius:var(--radius);display:block}
       <div class="section-label">Cosa fare in Luminar Neo</div>
       <div id="b-actions"></div>
 
+      <div class="section-label">Sequenza workflow consigliata</div>
+      <div id="b-workflow-seq" style="margin-bottom:14px"></div>
       <div class="sintesi-box" id="b-sintesi" style="display:none"></div>
 
     </div>
@@ -556,6 +562,15 @@ function renderAgente(d) {
   document.getElementById('bs1').textContent = d.style||selStyle_1;
   const mr = document.getElementById('a1-metrics');
   mr.innerHTML = (d.metrics||[]).map(m => `<div class="metric"><div class="num">${m.s}/10</div><div class="lbl">${m.l}</div><div class="bar"><div class="fill" style="width:${m.s*10}%"></div></div></div>`).join('');
+  // Stock row
+  const stockRow = document.getElementById('a1-stock-row');
+  const stockData = [
+    {name:'Adobe Stock', score: Math.round((d.metrics?.find(m=>m.l==='Stock')?.s||5)*10), col:'#1473E6'},
+    {name:'Etsy Stampe', score: Math.round((d.metrics?.find(m=>m.l==='Stampa')?.s||5)*10), col:'#F56400'},
+    {name:'Alamy', score: Math.round((d.metrics?.find(m=>m.l==='Stock')?.s||5)*9), col:'#E07B2A'},
+    {name:'Instagram', score: Math.round((d.metrics?.find(m=>m.l==='Social')?.s||5)*10), col:'#E1306C'},
+  ];
+  stockRow.innerHTML = stockData.map(s=>`<div style="background:var(--bg2);border-radius:var(--radius);padding:8px 12px;flex:1;min-width:80px;text-align:center;border-top:2px solid ${s.col}"><div style="font-size:18px;font-weight:700;color:${s.col}">${s.score}%</div><div style="font-size:9px;color:var(--text2);margin-top:2px">${s.name}</div></div>`).join('');
   document.getElementById('a1-analisi').textContent = d.analisi||'';
   document.getElementById('a1-strengths').textContent = d.strengths||'';
   const ps = document.getElementById('a1-pipeline');
@@ -564,6 +579,7 @@ function renderAgente(d) {
   document.getElementById('a1-caption').textContent = d.caption||'';
   document.getElementById('cc1').onclick = () => { navigator.clipboard.writeText(d.caption||'').then(()=>{ document.getElementById('cc1').textContent='Copiato!'; setTimeout(()=>document.getElementById('cc1').textContent='Copia',1800); }); };
   document.getElementById('a1-hashtags').innerHTML = (d.hashtags||[]).map(h=>`<span class="tag">${h.startsWith('#')?h:'#'+h}</span>`).join('');
+  document.getElementById('copy-hashtags-btn').onclick = () => { navigator.clipboard.writeText((d.hashtags||[]).map(h=>h.startsWith('#')?h:'#'+h).join(' ')).then(()=>{const b=document.getElementById('copy-hashtags-btn');b.textContent='Copiato!';setTimeout(()=>b.textContent='Copia tutti',1800);}); };
   document.getElementById('a1-timing').textContent = d.timing||'';
   document.getElementById('a1-export').textContent = d.export||'';
   document.getElementById('a1-cmp-intro').textContent = 'Confronto: "'+( d.style||selStyle_1)+'" vs "'+( d.cmp_style||'')+'"';
@@ -707,20 +723,23 @@ async function runBarocco(){
   document.getElementById('err2').style.display='none';
   document.getElementById('res2').style.display='none';
   const d=window._ld2;
-  const sys=`Sei un esperto di fotografia artistica e di Luminar Neo con Trasferimento Colore. Conosci i 6 stili di Andrea: Pittorico-Barocco (Caravaggio, Rembrandt, Vermeer), B&W Architettura Drammatica, Dark Forest Moody, Luce Volumetrica (Turner, De La Tour), Fantasy Soft, Nord Barocco (Caspar David Friedrich, Sotiris Andonopoulos).
+  const sys=`Sei un esperto del workflow fotografico di Andrea (Canon 5D Mark III). Il suo workflow reale: Lightroom (tono, esposizione, HSL, viraggio base, curve) -> MTC Pro (color web, contrasto pittorico) -> MTC Density (densita e struttura) -> MTC ChromaWarp (viraggio cromatico finale) -> Luminar Neo (SOLO tocchi finali specifici: nebbia/foschia atmosferica, trasferimento colore da dipinto, Relight AI se la luce e piatta, Skin AI per ritratti) -> Topaz AI -> Export LR.
 
-Prima di tutto RILEVA il tipo di foto: ritratto, paesaggio, architettura, foresta, paesaggio alpino/nordico, luce volumetrica. Poi analizza in base al tipo rilevato.
+Stili di Andrea: Pittorico-Barocco, B&W Architettura Drammatica, Dark Forest Moody, Luce Volumetrica, Fantasy Soft, Nord Barocco (Friedrich + Sotiris Andonopoulos).
 
-Per RITRATTI: valuta luce scultorea, pelle, sfondo, accento cromatico.
-Per PAESAGGI/FORESTE/ARCHITETTURA: valuta atmosfera, profondità, luce direzionale, composizione, cielo, nebbia/foschia.
-Per LUCE VOLUMETRICA: valuta raggi di luce, particelle, contrasto luce/ombra, teatralità.
+REGOLA FONDAMENTALE: le azioni devono seguire il workflow reale — Lightroom e MTC fanno il lavoro pesante, Luminar Neo SOLO per nebbia, trasferimento colore, Relight AI se serve, Skin AI per ritratti. NON inventare valori Luminar generici che non portano risultati reali.
 
-I riferimenti pittorici devono essere coerenti con il tipo di foto — per paesaggi usa Friedrich, Turner, Monet scuro, Gustave Courbet, Ivan Shishkin; per foreste usa Arnold Böcklin, Gustave Moreau; per architettura usa Piranesi, Canaletto drammatico; per ritratti usa Caravaggio, Rembrandt, Vermeer, De La Tour.
+Riconosci il tipo: ritratto, paesaggio, foresta, architettura, luce_volumetrica, alpino.
+Pittori paesaggi: Friedrich, Turner, Courbet, Shishkin.
+Pittori foreste: Bocklin, Moreau.
+Pittori architettura: Piranesi, Canaletto drammatico.
+Pittori luce volumetrica: Turner, De La Tour.
+Pittori ritratti: Caravaggio, Rembrandt, Vermeer.
 
-Dati tecnici: Zone scure \${d.dark}%, mezzitoni \${d.mid}%, luci \${d.light}%, luminosità media \${Math.round(d.avgL)}/255.
+Dati tecnici: Zone scure ${d.dark}%, mezzitoni ${d.mid}%, luci ${d.light}%, luminosita media ${Math.round(d.avgL)}/255.
 
 Rispondi SOLO con JSON valido senza markdown:
-{"tipo_foto":"ritratto|paesaggio|foresta|architettura|luce_volumetrica|alpino","stile_consigliato":"stile Andrea più adatto","diagnosi":[{"label":"Luce direzionale","stato":"ok|warn|bad","valore":"breve","nota":"1 frase"},{"label":"Profondità ombre","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Atmosfera","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Contrasto barocco","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Tono generale","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Composizione","stato":"ok|warn|bad","valore":"breve","nota":"frase"}],"scores":[{"label":"Luce scultorea","val":7},{"label":"Profondità nero","val":6},{"label":"Tono pittorico","val":5},{"label":"Contrasto drammatico","val":8},{"label":"Atmosfera","val":7},{"label":"Composizione","val":8}],"riferimenti":[{"match":"top","opera":"nome opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"2 frasi specifiche per questa foto","cosa_prendere":"cosa copiare con trasferimento colore","search_query":"query Google Images esatta"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"}],"azioni":[{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"cosa fare e dove in questa foto specifica","luminar":"tool Luminar Neo con valori numerici"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"},{"tipo":"add-light|add-shadow|color|fix","icona":"sun|moon|palette|alert-circle","titolo":"titolo","desc":"desc","luminar":"valori"}],"sintesi":"2-3 righe sintesi su questa foto specifica"}`;
+{"tipo_foto":"ritratto|paesaggio|foresta|architettura|luce_volumetrica|alpino","stile_consigliato":"stile Andrea piu adatto","diagnosi":[{"label":"Luce direzionale","stato":"ok|warn|bad","valore":"breve","nota":"1 frase"},{"label":"Profondita ombre","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Atmosfera","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Contrasto","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Tono generale","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Composizione","stato":"ok|warn|bad","valore":"breve","nota":"frase"}],"scores":[{"label":"Luce scultorea","val":7},{"label":"Profondita nero","val":6},{"label":"Tono pittorico","val":5},{"label":"Contrasto drammatico","val":8},{"label":"Atmosfera","val":7},{"label":"Composizione","val":8}],"riferimenti":[{"match":"top","opera":"nome opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"2 frasi specifiche per questa foto","cosa_prendere":"cosa copiare con trasferimento colore Luminar","search_query":"query Google Images esatta"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"}],"azioni":[{"sw":"Lightroom","tipo":"fix","icona":"adjustments-horizontal","titolo":"titolo","desc":"valori LR precisi per questa foto: esposizione, contrasto, luci, ombre, HSL, curve","luminar":""},{"sw":"MTC Pro","tipo":"color","icona":"palette","titolo":"titolo","desc":"color web specifica e valori MTC Pro per questo tipo di foto e stile","luminar":""},{"sw":"MTC Density","tipo":"fix","icona":"adjustments-horizontal","titolo":"titolo","desc":"valori MTC Density per questa foto","luminar":""},{"sw":"MTC ChromaWarp","tipo":"color","icona":"palette","titolo":"titolo","desc":"viraggio ChromaWarp consigliato per questa foto e stile","luminar":""},{"sw":"Luminar Neo","tipo":"add-light","icona":"sun","titolo":"titolo","desc":"SOLO se davvero utile: nebbia atmosferica, trasferimento colore dal dipinto di riferimento, Relight AI se luce piatta, Skin AI per ritratti — con valori reali e specifici","luminar":"tool esatto e valore numerico"}],"sintesi":"2-3 righe sintesi su questa foto specifica"}`; 
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3500,system:sys,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:imgMime_2,data:imgB64_2}},{type:'text',text:'Analizza questo ritratto per il workflow Pittorico-Barocco con Luminar Neo. Dimmi quale dipinto scaricare per il trasferimento colore.'}]}]})});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
@@ -728,7 +747,17 @@ Rispondi SOLO con JSON valido senza markdown:
     const txt=(raw.content||[]).map(i=>i.text||'').join('');
     const m=txt.match(/\{[\s\S]*\}/);
     if(!m)throw new Error('JSON non trovato');
-    renderBarocco(JSON.parse(m[0]));
+    let jsonStr2=m[0].replace(/[\x00-\x1F\x7F]/g,' ');
+    let parsed2;
+    try{parsed2=JSON.parse(jsonStr2);}
+    catch(pe){
+      let fixed=jsonStr2;
+      const op=(fixed.match(/\[/g)||[]).length-(fixed.match(/\]/g)||[]).length;
+      const ob=(fixed.match(/\{/g)||[]).length-(fixed.match(/\}/g)||[]).length;
+      for(let i=0;i<op;i++)fixed+=']';for(let i=0;i<ob;i++)fixed+='}';
+      try{parsed2=JSON.parse(fixed);}catch(pe2){throw new Error('JSON malformato — Riprova');}
+    }
+    renderBarocco(parsed2);
   }catch(e){
     const eb=document.getElementById('err2');
     eb.textContent='Errore: '+e.message;
@@ -749,10 +778,42 @@ function renderBarocco(d){
   const ss=document.getElementById('b-scores');
   ss.innerHTML=(d.scores||[]).map(s=>{const col=s.val>=7?'#1D9E75':s.val>=5?'#E07B2A':'#C0392B';return `<div class="score-row"><div class="score-label">${s.label}</div><div class="score-bar"><div class="score-fill" style="width:${Math.round(s.val*10)}%;background:${col}"></div></div><div class="score-val">${s.val}/10</div></div>`;}).join('');
   const rc=document.getElementById('b-refs');
-  rc.innerHTML=(d.riferimenti||[]).map(r=>`<div class="ref-card"><div class="ref-match ${r.match}">${r.match==='top'?'Riferimento ideale':'Ottima alternativa'}</div><div class="ref-title">${r.opera}</div><div class="ref-pittore">${r.pittore} · ${r.anno} · ${r.museo}</div><div class="ref-desc"><strong>Perché:</strong> ${r.perche}</div><div class="ref-desc"><strong>Cosa copiare:</strong> ${r.cosa_prendere}</div><div style="font-size:10px;color:var(--text3);margin-top:6px">Cerca su Google Images:</div><div class="ref-search">${r.search_query}</div></div>`).join('');
-  const icoMap={sun:'ti-sun',moon:'ti-moon',palette:'ti-palette','alert-circle':'ti-alert-circle'};
+  rc.innerHTML=(d.riferimenti||[]).map((r,ri)=>`<div class="ref-card"><div class="ref-match ${r.match}">${r.match==='top'?'✦ Riferimento ideale':'Ottima alternativa'}</div><div class="ref-title">${r.opera}</div><div class="ref-pittore">${r.pittore} · ${r.anno} · ${r.museo}</div><div class="ref-desc"><strong>Perché:</strong> ${r.perche}</div><div class="ref-desc"><strong>Cosa copiare con trasferimento colore:</strong> ${r.cosa_prendere}</div><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><div class="ref-search" style="flex:1">${r.search_query}</div><button data-query="${ri}" class="copy-ref-btn" style="padding:4px 10px;font-size:10px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);cursor:pointer;color:var(--text2);font-family:inherit;white-space:nowrap">Copia</button></div></div>`).join('');
+  const icoMap={sun:'ti-sun',moon:'ti-moon',palette:'ti-palette','alert-circle':'ti-alert-circle','adjustments-horizontal':'ti-adjustments-horizontal'};
   const colMap={'add-light':'light','add-shadow':'shadow','color':'color-ic','fix':'fix'};
-  document.getElementById('b-actions').innerHTML=(d.azioni||[]).map(a=>`<div class="action-item ${a.tipo}"><i class="ti ${icoMap[a.icona]||'ti-sparkles'} action-icon ${colMap[a.tipo]||'color-ic'}"></i><div><div class="action-title">${a.titolo}</div><div class="action-desc">${a.desc}</div><div class="action-luminar"><i class="ti ti-adjustments-horizontal" style="font-size:10px"></i> ${a.luminar}</div></div></div>`).join('');
+  const swColors={'Lightroom':'#1473E6','MTC Pro':'#7B3FA0','MTC Density':'#5C4A1E','MTC ChromaWarp':'#8B2020','Luminar Neo':'#1D9E75','Topaz AI':'#0F6E56'};
+  document.getElementById('b-actions').innerHTML=(d.azioni||[]).map(a=>{
+    const swCol=swColors[a.sw]||'#1D9E75';
+    const luminarLine = a.luminar ? `<div class="action-luminar"><i class="ti ti-adjustments-horizontal" style="font-size:10px"></i> Luminar: ${a.luminar}</div>` : '';
+    return `<div class="action-item ${a.tipo}" style="border-left-color:${swCol}">`+
+      `<div style="min-width:80px;font-size:9px;font-weight:700;color:${swCol};padding-top:2px;line-height:1.3">${a.sw||''}</div>`+
+      `<div><div class="action-title">${a.titolo}</div><div class="action-desc">${a.desc}</div>${luminarLine}</div></div>`;
+  }).join('');
+  // Sequenza workflow
+  const wfSeq = document.getElementById('b-workflow-seq');
+  const wfSteps = [
+    {sw:'Lightroom', col:'#1473E6', note:'Esposizione, contrasto, luci/ombre, HSL, curve — base del tono'},
+    {sw:'MTC Pro', col:'#7B3FA0', note:'Color web per il tuo stile · contrasto pittorico'},
+    {sw:'MTC Density', col:'#5C4A1E', note:'Densità e struttura dell\'immagine'},
+    {sw:'MTC ChromaWarp', col:'#8B2020', note:'Viraggio cromatico finale'},
+    {sw:'Luminar Neo', col:'#1D9E75', note:'Solo se serve: nebbia, trasferimento colore dal dipinto di riferimento, Relight AI'},
+    {sw:'Topaz AI', col:'#0F6E56', note:'DeNoise se ISO alti · Sharpen selettivo su punti focali'},
+    {sw:'Export LR', col:'#444', note:'TIFF 16bit per stampa · JPEG per stock e Instagram'}
+  ];
+  wfSeq.innerHTML = wfSteps.map((s,i)=>
+    `<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+      <div style="width:90px;font-size:9px;font-weight:700;color:${s.col};flex-shrink:0">${s.sw}</div>
+      <div style="flex:1;font-size:11px;color:var(--text2);background:var(--bg2);padding:6px 10px;border-radius:var(--radius);border-left:2px solid ${s.col}">${s.note}</div>
+      ${i<wfSteps.length-1?'<div style="font-size:10px;color:var(--text3)">↓</div>':''}
+    </div>`
+  ).join('');
+  document.getElementById('b-refs').onclick = e => {
+    const btn = e.target.closest('.copy-ref-btn');
+    if(!btn) return;
+    const ri = parseInt(btn.dataset.query);
+    const query = (d.riferimenti||[])[ri]?.search_query||'';
+    navigator.clipboard.writeText(query).then(()=>{btn.textContent='Copiato!';setTimeout(()=>btn.textContent='Copia',1800);});
+  };
   if(d.sintesi){const sb=document.getElementById('b-sintesi');sb.textContent=d.sintesi;sb.style.display='block';}
   document.getElementById('res2').style.display='block';
   document.getElementById('res2').scrollIntoView({behavior:'smooth',block:'start'});
