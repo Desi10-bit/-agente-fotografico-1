@@ -185,6 +185,12 @@ canvas{width:100%;border-radius:var(--radius);display:block}
 .lum-dot{position:absolute;top:-4px;width:3px;height:15px;background:#E07B2A;border-radius:2px}
 .zone-note{font-size:11px;color:var(--text2);line-height:1.6;background:var(--bg2);padding:9px 12px;border-radius:var(--radius);margin-top:5px}
 .sintesi-box{background:var(--bg2);border-radius:var(--radius);padding:11px 13px;font-size:12px;line-height:1.6;margin-top:8px;border-left:3px solid var(--green)}
+.cw-card{background:var(--bg2);border-radius:var(--radius);padding:10px 12px;margin-bottom:7px;display:flex;align-items:stretch;gap:10px}
+.cw-swatch{width:36px;border-radius:5px;flex-shrink:0}
+.cw-arrow{font-size:16px;color:var(--text3);display:flex;align-items:center;flex-shrink:0}
+.cw-vals{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.cw-val{font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--bg3)}
+.cw-val.pos{color:#1D9E75}.cw-val.neg{color:#C0392B}.cw-val.neu{color:var(--text2)}
 
 @media(max-width:540px){
   .metrics-row{grid-template-columns:repeat(3,1fr)}
@@ -400,6 +406,8 @@ canvas{width:100%;border-radius:var(--radius);display:block}
 
       <div class="section-label">Sequenza workflow consigliata</div>
       <div id="b-workflow-seq" style="margin-bottom:14px"></div>
+      <div class="section-label">ChromaWarp — Sostituzione palette</div>
+      <div id="b-chromawarp" style="margin-bottom:14px"></div>
       <div class="sintesi-box" id="b-sintesi" style="display:none"></div>
 
     </div>
@@ -739,7 +747,7 @@ Pittori ritratti: Caravaggio, Rembrandt, Vermeer.
 Dati tecnici: Zone scure ${d.dark}%, mezzitoni ${d.mid}%, luci ${d.light}%, luminosita media ${Math.round(d.avgL)}/255.
 
 Rispondi SOLO con JSON valido senza markdown:
-{"tipo_foto":"ritratto|paesaggio|foresta|architettura|luce_volumetrica|alpino","stile_consigliato":"stile Andrea piu adatto","diagnosi":[{"label":"Luce direzionale","stato":"ok|warn|bad","valore":"breve","nota":"1 frase"},{"label":"Profondita ombre","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Atmosfera","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Contrasto","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Tono generale","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Composizione","stato":"ok|warn|bad","valore":"breve","nota":"frase"}],"scores":[{"label":"Luce scultorea","val":7},{"label":"Profondita nero","val":6},{"label":"Tono pittorico","val":5},{"label":"Contrasto drammatico","val":8},{"label":"Atmosfera","val":7},{"label":"Composizione","val":8}],"riferimenti":[{"match":"top","opera":"nome opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"2 frasi specifiche per questa foto","cosa_prendere":"cosa copiare con trasferimento colore Luminar","search_query":"query Google Images esatta"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"}],"azioni":[{"sw":"Lightroom","tipo":"fix","icona":"adjustments-horizontal","titolo":"titolo","desc":"valori LR precisi per questa foto: esposizione, contrasto, luci, ombre, HSL, curve","luminar":""},{"sw":"MTC Pro","tipo":"color","icona":"palette","titolo":"titolo","desc":"color web specifica e valori MTC Pro per questo tipo di foto e stile","luminar":""},{"sw":"MTC Density","tipo":"fix","icona":"adjustments-horizontal","titolo":"titolo","desc":"valori MTC Density per questa foto","luminar":""},{"sw":"MTC ChromaWarp","tipo":"color","icona":"palette","titolo":"titolo","desc":"viraggio ChromaWarp consigliato per questa foto e stile","luminar":""},{"sw":"Luminar Neo","tipo":"add-light","icona":"sun","titolo":"titolo","desc":"SOLO se davvero utile: nebbia atmosferica, trasferimento colore dal dipinto di riferimento, Relight AI se luce piatta, Skin AI per ritratti — con valori reali e specifici","luminar":"tool esatto e valore numerico"}],"sintesi":"2-3 righe sintesi su questa foto specifica"}`; 
+{"tipo_foto":"ritratto|paesaggio|foresta|architettura|luce_volumetrica|alpino","stile_consigliato":"stile Andrea piu adatto","diagnosi":[{"label":"Luce direzionale","stato":"ok|warn|bad","valore":"breve","nota":"1 frase"},{"label":"Profondita ombre","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Atmosfera","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Contrasto","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Tono generale","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Composizione","stato":"ok|warn|bad","valore":"breve","nota":"frase"}],"scores":[{"label":"Luce scultorea","val":7},{"label":"Profondita nero","val":6},{"label":"Tono pittorico","val":5},{"label":"Contrasto drammatico","val":8},{"label":"Atmosfera","val":7},{"label":"Composizione","val":8}],"riferimenti":[{"match":"top","opera":"nome opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"2 frasi specifiche per questa foto","cosa_prendere":"cosa copiare con trasferimento colore Luminar","search_query":"query Google Images esatta"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"}],"azioni":[{"sw":"Lightroom","tipo":"fix","icona":"adjustments-horizontal","titolo":"titolo","desc":"valori LR precisi per questa foto: esposizione, contrasto, luci, ombre, HSL, curve","luminar":""},{"sw":"MTC Pro","tipo":"color","icona":"palette","titolo":"titolo","desc":"color web specifica e valori MTC Pro per questo tipo di foto e stile","luminar":""},{"sw":"MTC Density","tipo":"fix","icona":"adjustments-horizontal","titolo":"titolo","desc":"valori MTC Density per questa foto","luminar":""},{"sw":"MTC ChromaWarp","tipo":"color","icona":"palette","titolo":"titolo","desc":"viraggio ChromaWarp consigliato per questa foto e stile","luminar":""},{"sw":"Luminar Neo","tipo":"add-light","icona":"sun","titolo":"titolo","desc":"SOLO se davvero utile: nebbia atmosferica, trasferimento colore dal dipinto di riferimento, Relight AI se luce piatta, Skin AI per ritratti — con valori reali e specifici","luminar":"tool esatto e valore numerico"}],"sintesi":"2-3 righe sintesi su questa foto specifica","chromawarp":[{"colore_attuale":"nome colore dominante nella foto (es. Verde foglie)","hex_attuale":"#hex","colore_target":"colore barocco obiettivo (es. Ambra calda)","hex_target":"#hex","hue_shift":+15,"saturation":-20,"luminosity":-10,"nota":"perche questo spostamento"},{"colore_attuale":"secondo colore","hex_attuale":"#hex","colore_target":"target","hex_target":"#hex","hue_shift":0,"saturation":-30,"luminosity":-15,"nota":"spiegazione"},{"colore_attuale":"terzo colore","hex_attuale":"#hex","colore_target":"target","hex_target":"#hex","hue_shift":-10,"saturation":-25,"luminosity":-20,"nota":"spiegazione"},{"colore_attuale":"quarto colore","hex_attuale":"#hex","colore_target":"target","hex_target":"#hex","hue_shift":+20,"saturation":+10,"luminosity":-5,"nota":"spiegazione"}]}`; 
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3500,system:sys,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:imgMime_2,data:imgB64_2}},{type:'text',text:'Analizza questo ritratto per il workflow Pittorico-Barocco con Luminar Neo. Dimmi quale dipinto scaricare per il trasferimento colore.'}]}]})});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
@@ -807,6 +815,33 @@ function renderBarocco(d){
       ${i<wfSteps.length-1?'<div style="font-size:10px;color:var(--text3)">↓</div>':''}
     </div>`
   ).join('');
+  // ChromaWarp rendering
+  const cwDiv = document.getElementById('b-chromawarp');
+  if(d.chromawarp && d.chromawarp.length){
+    cwDiv.innerHTML = `<div style='font-size:11px;color:var(--text2);margin-bottom:8px;padding:8px 11px;background:var(--bg2);border-radius:var(--radius);border-left:3px solid #8B2020'>Apri ChromaWarp in Photoshop · Seleziona il canale colore corrispondente · Applica i valori Hue / Saturation / Luminosity indicati per ogni colore</div>` +
+    (d.chromawarp||[]).map(c=>{
+      const hueSgn = c.hue_shift>0?'+':''; const satSgn = c.saturation>0?'+':''; const lumSgn = c.luminosity>0?'+':'';
+      const hueCol = c.hue_shift!==0?(c.hue_shift>0?'pos':'neg'):'neu';
+      const satCol = c.saturation!==0?(c.saturation>0?'pos':'neg'):'neu';
+      const lumCol = c.luminosity!==0?(c.luminosity>0?'pos':'neg'):'neu';
+      return `<div class='cw-card'>`+
+        `<div class='cw-swatch' style='background:${c.hex_attuale}' title='${c.colore_attuale}'></div>`+
+        `<div class='cw-arrow'>→</div>`+
+        `<div class='cw-swatch' style='background:${c.hex_target}' title='${c.colore_target}'></div>`+
+        `<div style='flex:1'>`+
+          `<div style='font-size:12px;font-weight:600;color:var(--text)'>${c.colore_attuale} → ${c.colore_target}</div>`+
+          `<div class='cw-vals'>`+
+            `<span class='cw-val ${hueCol}'>Hue ${hueSgn}${c.hue_shift}°</span>`+
+            `<span class='cw-val ${satCol}'>Sat ${satSgn}${c.saturation}</span>`+
+            `<span class='cw-val ${lumCol}'>Lum ${lumSgn}${c.luminosity}</span>`+
+          `</div>`+
+          `<div style='font-size:10px;color:var(--text2);margin-top:4px;font-style:italic'>${c.nota}</div>`+
+        `</div>`+
+      `</div>`;
+    }).join('');
+  } else {
+    cwDiv.innerHTML = '<div style="font-size:12px;color:var(--text2)">Dati ChromaWarp non disponibili — rianalizza la foto</div>';
+  }
   document.getElementById('b-refs').onclick = e => {
     const btn = e.target.closest('.copy-ref-btn');
     if(!btn) return;
