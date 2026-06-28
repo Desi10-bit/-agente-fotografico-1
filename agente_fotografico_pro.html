@@ -574,6 +574,8 @@ Per la musica usa brani reali: Pittorico-Barocco: Bach Arvo Part Max Richter; B&
     let jsonStr = m[0];
     // Pulizia robusta: rimuovi caratteri di controllo
     jsonStr = jsonStr.replace(/[\x00-\x1F\x7F]/g, ' ');
+    // Rimuovi segno + davanti ai numeri (non valido in JSON)
+    jsonStr = jsonStr.replace(/:\s*\+([0-9])/g, ': $1');
     // Prova parsing diretto
     let parsed;
     try {
@@ -851,6 +853,8 @@ Rispondi SOLO con JSON valido senza markdown:
     const m=txt.match(/\{[\s\S]*\}/);
     if(!m)throw new Error('JSON non trovato');
     let jsonStr2=m[0].replace(/[\x00-\x1F\x7F]/g,' ');
+    // Rimuovi segno + davanti ai numeri (non valido in JSON)
+    jsonStr2=jsonStr2.replace(/:\s*\+([0-9])/g,': $1');
     let parsed2;
     try{parsed2=JSON.parse(jsonStr2);}
     catch(pe){
@@ -858,7 +862,7 @@ Rispondi SOLO con JSON valido senza markdown:
       const op=(fixed.match(/\[/g)||[]).length-(fixed.match(/\]/g)||[]).length;
       const ob=(fixed.match(/\{/g)||[]).length-(fixed.match(/\}/g)||[]).length;
       for(let i=0;i<op;i++)fixed+=']';for(let i=0;i<ob;i++)fixed+='}';
-      try{parsed2=JSON.parse(fixed);}catch(pe2){throw new Error('JSON malformato — Riprova');}
+      try{parsed2=JSON.parse(fixed);}catch(pe2){throw new Error('JSON malformato: '+pe.message+' — Riprova');}
     }
     renderBarocco(parsed2);
   }catch(e){
