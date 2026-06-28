@@ -569,13 +569,13 @@ Per la musica usa brani reali: Pittorico-Barocco: Bach Arvo Part Max Richter; B&
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const raw = await resp.json();
     const txt = (raw.content || []).map(i => i.text || '').join('');
+    console.log('Risposta raw:', txt.slice(0, 500));
     const m = txt.match(/\{[\s\S]*\}/);
-    if (!m) throw new Error('JSON non trovato nella risposta');
+    if (!m) throw new Error('JSON non trovato. Risposta: ' + txt.slice(0, 300));
     let jsonStr = m[0];
-    // Pulizia robusta: rimuovi caratteri di controllo
     jsonStr = jsonStr.replace(/[\x00-\x1F\x7F]/g, ' ');
-    // Rimuovi segno + davanti ai numeri (non valido in JSON)
     jsonStr = jsonStr.replace(/:\s*\+([0-9])/g, ': $1');
+    console.log('JSON pulito:', jsonStr.slice(0, 300));
     // Prova parsing diretto
     let parsed;
     try {
@@ -602,6 +602,7 @@ Per la musica usa brani reali: Pittorico-Barocco: Bach Arvo Part Max Richter; B&
 }
 
 function renderAgente(d) {
+  console.log('renderAgente chiamato con:', JSON.stringify(d).slice(0,300));
   const total = (d.pot?.foto||0)+(d.pot?.preset||0)+(d.pot?.pdf||0);
   document.getElementById('pt1').textContent = '€'+total;
   document.getElementById('ps1').textContent = 'Foto €'+(d.pot?.foto||0)+' · Preset €'+(d.pot?.preset||0)+' · PDF €'+(d.pot?.pdf||0);
