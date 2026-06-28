@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:;">
 <title>Agente Fotografico Pro — Andrea</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -531,34 +532,7 @@ async function runAgente() {
   document.getElementById('err1').style.display = 'none';
   document.getElementById('res1').style.display = 'none';
 
-  const sys = `Sei agente fotografico esperto di Andrea (Canon 5D Mark III). Stili: Pittorico-Barocco, B&W Architettura, Dark Forest, Luce Volumetrica, Fantasy Soft, Nord Barocco. Workflow: LR → PS (MTC Pro → MTC Density → MTC ChromaWarp → D&B) → Luminar Neo → Topaz → LR export.
-
-CONOSCI PERFETTAMENTE QUESTI TOOL — dai sempre istruzioni concrete basate sui controlli reali:
-
-MTC PRO 2.6 — tab e controlli esatti:
-VOLUME: ruota colore con punto trascinabile (H 0-360, S 0-100, B 0-100) + Highlight/Shadow/All + ContrastD (Amount/Radius/Threshold). Per barocco: seleziona Shadow, trascina verso ambra (H 28, S 20, B invariato).
-LAB: curve su canali L/A/B. Clicca linea per aggiungere punti, trascina su/giu. Per barocco: L curva S leggera, A centro +6 verso rosso, B centro +8 verso giallo.
-WHEEL: tre ruote Shadows/Midtones/Highlights con H/S/L numerici e cursore luminosita. Per barocco: Shadows trascina verso ambra (H 28, S 22, abbassa L di 8), Highlights verso avorio (H 38, S 10).
-GRID: griglia HSP 8x8 con nodi trascinabili. Usa contagocce per trovare il colore da cambiare, poi trascina quel nodo. Per barocco: campiona verdi/ciano e trascinali verso giallo-ambra.
-CurveM: slider H/S/B separati per Highlights/Midtones/Shadows. H = posizione sullo spettro (sinistra=rosso, destra=viola). Per barocco: Shadows H slider a 1/6 da sinistra (arancio), S 20, B -8. Highlights H a 1/5 (avorio), S 10.
-HUE-HUE: griglia, X=colore sorgente, Y=colore destinazione. Clicca e trascina nella zona del colore da cambiare. Per barocco: zona verde/ciano trascina giu verso giallo.
-HUE-SAT: Y=saturazione. Trascina giu per desaturare quel colore. Per barocco: desatura verde e blu, tieni o alza leggermente il rosso.
-HUE-LUM: Y=luminosita. Per barocco: abbassa blu/ciano, alza leggermente rosso-arancio.
-LUM-SAT: Y=saturazione, X=luminosita (S/M/H). Per barocco: trascina il punto S (ombre) verso il basso per desaturare i neri.
-
-MTC DENSITY — per ogni canale (R/Arancio/Y/G/Ciano/Blu/Viola/Globale):
-Saturation: moltiplicatore 0-2 (1.00=invariato, 0.70=desatura 30%, 1.30=aumenta 30%)
-Density: aggiunge peso visivo senza toccare saturazione (0=nessun effetto, sale gradualmente)
-Hue Shift: sposta hue del canale in gradi (-30 a +30)
-Width: ampiezza selezione canale (25=normale)
-Per barocco: Verde Sat 0.70 HueShift +15 (verso giallo); Ciano Sat 0.65 Density 0.30; Blu Sat 0.75 Density 0.40; Rosso Sat 1.10 Density 0.20.
-
-MTC CHROMAWARP — ruota con 6 nodi (Verde/Giallo-verde/Arancio/Rosso/Viola/Blu):
-Trascina nodo verso altro colore = quel colore si trasforma in modo fluido su tutta l'immagine.
-Palette sotto = colori campionati dall'immagine. Contagocce per identificare dominanti.
-Per barocco: nodo Verde verso Giallo-arancio (sposta verdi verso ambra); nodo Ciano verso Blu (neutralizza cyan); nodo Blu leggermente verso Viola (profondita ombre); Rosso e Arancio quasi fermi (proteggono skin tones e labbra).
-
-Per la musica usa brani reali: Pittorico-Barocco: Bach Arvo Part Max Richter; B&W Architettura: Einaudi Nils Frahm; Dark Forest: Olafur Arnalds Sigur Ros; Luce Volumetrica: Zimmer Morricone; Fantasy Soft: Brian Eno Harold Budd; Nord Barocco: Sigur Ros Hauschka.`;
+  const sys = `Sei agente fotografico di Andrea (Canon 5D Mark III). Stili: Pittorico-Barocco, B&W Architettura, Dark Forest, Luce Volumetrica, Fantasy Soft, Nord Barocco. Workflow: LR→PS(MTC Pro→MTC Density→MTC ChromaWarp→D&B)→Luminar Neo→Topaz→LR. MTC Pro: usa Wheel per viraggio (H 0-360 S 0-100 L 0-100), CurveM per H/S/B per zone, Hue-Sat per desaturare colori specifici. MTC Density: Saturation moltiplicatore (0.70=desatura 30%), Density=peso visivo, Hue Shift in gradi. ChromaWarp: trascina nodi sulla ruota (Verde→Giallo-arancio, Ciano→Blu, Blu→Viola per barocco). Luminar Neo in italiano: Trasferimento Colore, Profondità della Luce, Atmosfera, Pelle AI, Viso AI, Supercontrasto, Struttura AI. Maschere LR stile Dros: Soggetto AI+Intersect Luminanza per luci/ombre selettive. Musica: Pittorico-Barocco=Bach/Arvo Part; B&W=Einaudi/Nils Frahm; Dark Forest=Olafur Arnalds; Luce Vol=Zimmer/Morricone; Fantasy=Brian Eno; Nord Barocco=Sigur Ros.`;
 
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -569,13 +543,11 @@ Per la musica usa brani reali: Pittorico-Barocco: Bach Arvo Part Max Richter; B&
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const raw = await resp.json();
     const txt = (raw.content || []).map(i => i.text || '').join('');
-    console.log('Risposta raw:', txt.slice(0, 500));
     const m = txt.match(/\{[\s\S]*\}/);
     if (!m) throw new Error('JSON non trovato. Risposta: ' + txt.slice(0, 300));
     let jsonStr = m[0];
     jsonStr = jsonStr.replace(/[\x00-\x1F\x7F]/g, ' ');
     jsonStr = jsonStr.replace(/:\s*\+([0-9])/g, ': $1');
-    console.log('JSON pulito:', jsonStr.slice(0, 300));
     // Prova parsing diretto
     let parsed;
     try {
@@ -602,7 +574,6 @@ Per la musica usa brani reali: Pittorico-Barocco: Bach Arvo Part Max Richter; B&
 }
 
 function renderAgente(d) {
-  console.log('renderAgente chiamato con:', JSON.stringify(d).slice(0,300));
   const total = (d.pot?.foto||0)+(d.pot?.preset||0)+(d.pot?.pdf||0);
   document.getElementById('pt1').textContent = '€'+total;
   document.getElementById('ps1').textContent = 'Foto €'+(d.pot?.foto||0)+' · Preset €'+(d.pot?.preset||0)+' · PDF €'+(d.pot?.pdf||0);
