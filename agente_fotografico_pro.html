@@ -531,9 +531,34 @@ async function runAgente() {
   document.getElementById('err1').style.display = 'none';
   document.getElementById('res1').style.display = 'none';
 
-  const sys = `Sei agente fotografico di Andrea (Canon 5D Mark III). Stili: Pittorico-Barocco, B&W Architettura, Dark Forest, Luce Volumetrica, Fantasy Soft, Nord Barocco. Workflow: LR→PS(MTC Pro→MTC Density→MTC ChromaWarp→D&B)→Luminar Neo→Topaz→LR. Per la musica scegli brani reali appropriati per ogni uso: Pittorico-Barocco: Bach, Vivaldi, Arvo Part, Max Richter; B&W Architettura: Ludovico Einaudi, Nils Frahm, Johann Johannsson; Dark Forest: Olafur Arnalds, Sigur Ros, Julianna Barwick; Luce Volumetrica: Hans Zimmer, Ennio Morricone, Johann Johannsson; Fantasy Soft: Brian Eno, Harold Budd, Stars of the Lid; Nord Barocco: Sigur Ros, Hauschka, Johann Johannsson.
-Rispondi SOLO con JSON valido senza markdown:
-{"style":"nome","pot":{"foto":120,"preset":35,"pdf":25},"metrics":[{"l":"Stock","s":7},{"l":"Originalità","s":8},{"l":"Qualità tec.","s":9},{"l":"Stampa","s":6},{"l":"Social","s":8}],"analisi":"testo","strengths":"testo","pipeline":[{"n":"1","sw":"sw","az":"az","det":"det"}],"wf_note":"testo","farei":[{"sw":"Lightroom","titolo":"Base tono + Maschere pittoriche","desc":"1) BASE GLOBALE: Esposizione -0.3/-0.7, Luci -40/-60, Ombre -15/-25, Neri -40/-60, Bianchi -20, Contrasto +15, Temperatura +10/+15. 2) MASCHERA LUCE SCULTOREA (tecnica Albert Dros): crea nuova maschera → Soggetto AI → Intersect → Gamma Luminanza → seleziona solo le alte luci (Range 60-100, Uniformità alta) → Esposizione +0.3/+0.5, Temperatura +10, Tinta +3 → simula la luce laterale calda sul soggetto. 3) MASCHERA OMBRE PITTORICHE: nuova maschera → Soggetto AI → Intersect → Gamma Luminanza → seleziona solo le ombre (Range 0-45) → Esposizione -0.3, Neri -20, Temperatura -5 → profondisce le ombre sul soggetto mantenendo il dettaglio. 4) MASCHERA FONDO NERO: nuova maschera → Gradiente Lineare su tutto il fondo → Intersect → Gamma Luminanza ombre (Range 0-55) → Esposizione -1.5/-2.0, Neri -60 → porta il fondo al nero senza toccare il soggetto. 5) ALONE LUCE PITTORICO: nuova maschera → Gradiente Radiale centrato sul viso/soggetto → Sottrai → Soggetto AI → Esposizione +0.2, Temperatura +8 → crea un alone di luce morbido attorno al soggetto come nei dipinti fiamminghi."},{"sw":"MTC Pro","titolo":"quale tool usare","desc":"specifica QUALE strumento di MTC Pro usare e perche: CurveM per color grading globale con interpolazione complessa, Color Wheels per viraggio ombre/mezzitoni/luci, Hue vs Hue per cambiare un colore specifico (es. verde → ambra), Hue vs Sat per desaturare selettivamente un colore problematico, Hue vs Lum per controllare la luminosità di un colore specifico, Grid Tool per scultura colore nello spazio LAB. Per ogni strumento spiega concretamente cosa fare su questa foto specifica."},{"sw":"MTC Density","titolo":"canale e tipo di intervento","desc":"indica quale canale tra R/G/B/C/M/Y/Skin e il tipo di intervento: Density aggiunge peso visivo senza toccare la saturazione (ideale per scurire un colore mantenendone la vividezza), Saturation subtrattiva arricchisce i colori senza espandere i canali RGB (più naturale del normale Sat). Descrivi poco/medio/molto e spiega perché quel canale specifico su questa foto."},{"sw":"MTC ChromaWarp","titolo":"coppie colore sorgente-target","desc":"definisci le coppie colore da impostare sulla ruota di ChromaWarp: colore sorgente (quello nella foto) → colore target barocco. ChromaWarp lavora in CIELAB quindi le transizioni sono morbide e naturali. Suggerisci anche gli Anchor Points per proteggere i colori critici (es. skin tone) dalla deformazione."},{"sw":"Dodge & Burn","titolo":"Scultura luce e ombra","desc":"dove aggiungerei luce e dove toglierla su questa foto specifica"},{"sw":"Luminar Neo","titolo":"quale tool Luminar Neo usare","desc":"indica in italiano SOLO i tool utili su questa foto: TRASFERIMENTO COLORE (pannello Creativo) per copiare la palette dal dipinto di riferimento - il tool piu potente; PROFONDITA DELLA LUCE (Creativo) per separazione realistica della luce; ATMOSFERA (Creativo) per nebbia/foschia depth mapping 3D; MIGLIORA CREPUSCOLO AI (Paesaggio) per foto outdoor - preset Blush/Golden/Blue/Emerald/Mauve, slider Quantita, Cielo (Temperatura/Tinta/Esposizione), Alba, Scena; PELLE AI (Ritratto) con Rimozione Imperfezioni, Rimozione Brillantezza, Levigatezza; VISO AI (Ritratto) - Illuminazione Viso, Rossore Labbra, Rimozione Occhiaie; SUPERCONTRASTO (Essenziali) per contrasto selettivo per zone; STRUTTURA AI (Essenziali) per paesaggi/architettura. Indica il pannello in italiano e cosa fare di preciso."},{"sw":"Topaz AI","titolo":"Dettaglio finale","desc":"DeNoise o Sharpen — impostazioni per questa foto"},{"sw":"Export finale","titolo":"Export e destinazione","desc":"formato, dimensioni, profilo colore per stock e Instagram"}],"caption":"caption","hashtags":["h1","h2"],"timing":"testo","export":"testo","cmp_style":"stile","cmp_cur":["p1","p2","p3"],"cmp_alt":["p1","p2","p3"],"cmp_rec":"testo","visione":{"cuore":"descrivi con precisione QUALE elemento della foto ha piu forza emotiva e perche (es. la luce sul naso, il ramo in primo piano, l'arco in controluce) — sii specifico con posizione nella foto","percorso_occhio":"descrivi dove deve andare l'occhio dello spettatore: da dove entra, dove si ferma, dove riposa — costruisci un percorso visivo deliberato","sensazione_target":"la sensazione esatta che deve trasmettere la foto finita — meditazione, bellezza silenziosa, solitudine sacra, gioia contemplativa, tempo sospeso — sii poetico e preciso","cosa_valorizzare":"elenca 3-4 elementi specifici della foto da valorizzare con luce e ombra: quali schiarire, quali scurire, quali isolare con le maschere LR","cosa_eliminare":"cosa distrae o indebolisce — cosa portare al nero, cosa desaturare, cosa nascondere","maschere_specifiche":[{"maschera":"descrizione maschera LR specifica per questa foto","zona":"zona precisa della foto","effetto":"cosa fare: schiarisci +X, scalda +X, scurisci -X","perche":"perche questo serve alla sensazione target"},{"maschera":"seconda maschera","zona":"zona","effetto":"effetto","perche":"perche"},{"maschera":"terza maschera","zona":"zona","effetto":"effetto","perche":"perche"}],"frase_poetica":"una frase breve e poetica che descrive la foto finita come dovrebbe essere — come la didascalia di un quadro in un museo. Max 20 parole."},"editorial":[{"d":"Lun","f":"Post","t":"18:30","c":"contenuto"}],"musica":[{"uso":"Editing / Ispirazione","titolo":"titolo brano","artista":"artista","genere":"genere","mood":"perche questo brano per questa foto","spotify":"nome esatto da cercare su Spotify"},{"uso":"Reel Instagram","titolo":"titolo","artista":"artista","genere":"genere","mood":"perche","spotify":"cerca su Spotify"},{"uso":"Stories / BTS","titolo":"titolo","artista":"artista","genere":"genere","mood":"perche","spotify":"cerca su Spotify"},{"uso":"Presentazione stampe","titolo":"titolo","artista":"artista","genere":"genere","mood":"perche","spotify":"cerca su Spotify"}]}`;
+  const sys = `Sei agente fotografico esperto di Andrea (Canon 5D Mark III). Stili: Pittorico-Barocco, B&W Architettura, Dark Forest, Luce Volumetrica, Fantasy Soft, Nord Barocco. Workflow: LR → PS (MTC Pro → MTC Density → MTC ChromaWarp → D&B) → Luminar Neo → Topaz → LR export.
+
+CONOSCI PERFETTAMENTE QUESTI TOOL — dai sempre istruzioni concrete basate sui controlli reali:
+
+MTC PRO 2.6 — tab e controlli esatti:
+VOLUME: ruota colore con punto trascinabile (H 0-360, S 0-100, B 0-100) + Highlight/Shadow/All + ContrastD (Amount/Radius/Threshold). Per barocco: seleziona Shadow, trascina verso ambra (H 28, S 20, B invariato).
+LAB: curve su canali L/A/B. Clicca linea per aggiungere punti, trascina su/giu. Per barocco: L curva S leggera, A centro +6 verso rosso, B centro +8 verso giallo.
+WHEEL: tre ruote Shadows/Midtones/Highlights con H/S/L numerici e cursore luminosita. Per barocco: Shadows trascina verso ambra (H 28, S 22, abbassa L di 8), Highlights verso avorio (H 38, S 10).
+GRID: griglia HSP 8x8 con nodi trascinabili. Usa contagocce per trovare il colore da cambiare, poi trascina quel nodo. Per barocco: campiona verdi/ciano e trascinali verso giallo-ambra.
+CurveM: slider H/S/B separati per Highlights/Midtones/Shadows. H = posizione sullo spettro (sinistra=rosso, destra=viola). Per barocco: Shadows H slider a 1/6 da sinistra (arancio), S 20, B -8. Highlights H a 1/5 (avorio), S 10.
+HUE-HUE: griglia, X=colore sorgente, Y=colore destinazione. Clicca e trascina nella zona del colore da cambiare. Per barocco: zona verde/ciano trascina giu verso giallo.
+HUE-SAT: Y=saturazione. Trascina giu per desaturare quel colore. Per barocco: desatura verde e blu, tieni o alza leggermente il rosso.
+HUE-LUM: Y=luminosita. Per barocco: abbassa blu/ciano, alza leggermente rosso-arancio.
+LUM-SAT: Y=saturazione, X=luminosita (S/M/H). Per barocco: trascina il punto S (ombre) verso il basso per desaturare i neri.
+
+MTC DENSITY — per ogni canale (R/Arancio/Y/G/Ciano/Blu/Viola/Globale):
+Saturation: moltiplicatore 0-2 (1.00=invariato, 0.70=desatura 30%, 1.30=aumenta 30%)
+Density: aggiunge peso visivo senza toccare saturazione (0=nessun effetto, sale gradualmente)
+Hue Shift: sposta hue del canale in gradi (-30 a +30)
+Width: ampiezza selezione canale (25=normale)
+Per barocco: Verde Sat 0.70 HueShift +15 (verso giallo); Ciano Sat 0.65 Density 0.30; Blu Sat 0.75 Density 0.40; Rosso Sat 1.10 Density 0.20.
+
+MTC CHROMAWARP — ruota con 6 nodi (Verde/Giallo-verde/Arancio/Rosso/Viola/Blu):
+Trascina nodo verso altro colore = quel colore si trasforma in modo fluido su tutta l'immagine.
+Palette sotto = colori campionati dall'immagine. Contagocce per identificare dominanti.
+Per barocco: nodo Verde verso Giallo-arancio (sposta verdi verso ambra); nodo Ciano verso Blu (neutralizza cyan); nodo Blu leggermente verso Viola (profondita ombre); Rosso e Arancio quasi fermi (proteggono skin tones e labbra).
+
+Per la musica usa brani reali: Pittorico-Barocco: Bach Arvo Part Max Richter; B&W Architettura: Einaudi Nils Frahm; Dark Forest: Olafur Arnalds Sigur Ros; Luce Volumetrica: Zimmer Morricone; Fantasy Soft: Brian Eno Harold Budd; Nord Barocco: Sigur Ros Hauschka.`;
 
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -777,25 +802,49 @@ async function runBarocco(){
   document.getElementById('err2').style.display='none';
   document.getElementById('res2').style.display='none';
   const d=window._ld2;
-  const sys=`Sei un esperto del workflow fotografico di Andrea (Canon 5D Mark III). Il suo workflow reale: Lightroom (tono, esposizione, HSL, viraggio base, curve) -> MTC Pro (color web, contrasto pittorico) -> MTC Density (densita e struttura) -> MTC ChromaWarp (viraggio cromatico finale) -> Luminar Neo (SOLO tocchi finali specifici: nebbia/foschia atmosferica, trasferimento colore da dipinto, Relight AI se la luce e piatta, Skin AI per ritratti) -> Topaz AI -> Export LR.
+  const sys=`Sei un esperto del workflow fotografico di Andrea (Canon 5D Mark III). Il suo workflow: Lightroom → PS (MTC Pro → MTC Density → MTC ChromaWarp → D&B) → Luminar Neo → Topaz → LR export.
 
-Stili di Andrea: Pittorico-Barocco, B&W Architettura Drammatica, Dark Forest Moody, Luce Volumetrica, Fantasy Soft, Nord Barocco (Friedrich + Sotiris Andonopoulos).
+Stili di Andrea: Pittorico-Barocco, B&W Architettura Drammatica, Dark Forest Moody, Luce Volumetrica, Fantasy Soft, Nord Barocco.
 
-REGOLA FONDAMENTALE: le azioni devono seguire il workflow reale — Lightroom e MTC fanno il lavoro pesante, Luminar Neo SOLO per nebbia, trasferimento colore, Relight AI se serve, Skin AI per ritratti. NON inventare valori Luminar generici che non portano risultati reali.
+QUESTO E UN ANALIZZATORE SOLO PER RITRATTI — se la foto non e un ritratto dillo nella sintesi ma analizza comunque.
 
-Riconosci il tipo: ritratto, paesaggio, foresta, architettura, luce_volumetrica, alpino.
-Pittori paesaggi: Friedrich, Turner, Courbet, Shishkin.
-Pittori foreste: Bocklin, Moreau.
-Pittori architettura: Piranesi, Canaletto drammatico.
-Pittori luce volumetrica: Turner, De La Tour.
-Pittori ritratti: Caravaggio, Rembrandt, Vermeer.
+REGOLA FONDAMENTALE: il workflow e LR + MTC per il lavoro pesante, Luminar solo per tocchi finali specifici. NON inventare valori — usa solo i controlli reali che conosci:
 
-Dati tecnici: Zone scure ${d.dark}%, mezzitoni ${d.mid}%, luci ${d.light}%, luminosita media ${Math.round(d.avgL)}/255.
+LIGHTROOM maschere Albert Dros:
+Maschera 1 — Soggetto AI + Intersect Gamma Luminanza (Range 60-100): schiarisci +0.3/+0.5, Temperatura +10/+15 → luce scultorea sulle alte luci del soggetto
+Maschera 2 — Soggetto AI + Intersect Gamma Luminanza (Range 0-45): Esposizione -0.3, Neri -20, Temperatura -5 → ombre profonde sul soggetto
+Maschera 3 — Gradiente Lineare sfondo + Intersect Luminanza ombre: Esposizione -1.5/-2.0, Neri -60 → fondo al nero
+Maschera 4 — Gradiente Radiale centrato sul soggetto + Sottrai Soggetto AI: Esposizione +0.2, Temperatura +8 → alone pittorico
+
+MTC PRO controlli reali:
+WHEEL Shadows: trascina punto ruota verso ambra (H 28, S 20-25, abbassa L di 5-10)
+WHEEL Highlights: trascina verso avorio (H 38-42, S 8-12)
+HUE-SAT: nella griglia clicca zona verde e trascina giu (desatura), zona blu trascina giu, zona rossa lascia o alza leggermente
+HUE-HUE: nella griglia zona verde/ciano trascina verso il basso (sposta verso giallo)
+LUM-SAT: punto S (ombre) trascina giu per desaturare i neri
+CurveM: Shadows H slider a 1/6 da sinistra (arancio) S 20 B -8; Highlights H a 1/5 S 10
+
+MTC DENSITY (canali reali: R/Arancio/Y/G/Ciano/Blu/Viola):
+Verde: Saturation 0.70, Hue Shift +15, Width 25
+Ciano: Saturation 0.65, Density 0.30, Width 25
+Blu: Saturation 0.75, Density 0.40, Width 25
+Rosso: Saturation 1.10, Density 0.20, Width 25
+
+MTC CHROMAWARP (nodi sulla ruota: Verde/Giallo-verde/Arancio/Rosso/Viola/Blu):
+Nodo Verde → trascina verso Giallo-arancio (sposta verdi verso ambra)
+Nodo Ciano → trascina verso Blu (neutralizza cyan)
+Nodo Blu → trascina leggermente verso Viola (profondita ombre)
+Nodo Rosso e Arancio → quasi fermi (proteggono skin tones)
+
+LUMINAR NEO in italiano (solo tocchi finali):
+Trasferimento Colore (Creativo), Profondita della Luce (Creativo), Atmosfera (Creativo), Pelle AI con Rimozione Imperfezioni/Brillantezza/Levigatezza (Ritratto), Viso AI con Illuminazione Viso + Rossore Labbra + Rimozione Occhiaie (Ritratto), Supercontrasto (Essenziali), Struttura AI (Essenziali).
+
+Dati tecnici foto: Zone scure ${d.dark}%, mezzitoni ${d.mid}%, luci ${d.light}%, luminosita media ${Math.round(d.avgL)}/255.
 
 Rispondi SOLO con JSON valido senza markdown:
 {"tipo_foto":"ritratto|paesaggio|foresta|architettura|luce_volumetrica|alpino","stile_consigliato":"stile Andrea piu adatto","diagnosi":[{"label":"Luce direzionale","stato":"ok|warn|bad","valore":"breve","nota":"1 frase"},{"label":"Profondita ombre","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Atmosfera","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Contrasto","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Tono generale","stato":"ok|warn|bad","valore":"breve","nota":"frase"},{"label":"Composizione","stato":"ok|warn|bad","valore":"breve","nota":"frase"}],"scores":[{"label":"Luce scultorea","val":7},{"label":"Profondita nero","val":6},{"label":"Tono pittorico","val":5},{"label":"Contrasto drammatico","val":8},{"label":"Atmosfera","val":7},{"label":"Composizione","val":8}],"riferimenti":[{"match":"top","opera":"nome opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"2 frasi specifiche per questa foto","cosa_prendere":"cosa copiare con trasferimento colore Luminar","search_query":"query Google Images esatta"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"},{"match":"good","opera":"opera","pittore":"pittore","anno":"anno","museo":"museo","perche":"frase","cosa_prendere":"cosa","search_query":"query"}],"azioni":[{"sw":"Lightroom","tipo":"fix","icona":"adjustments-horizontal","titolo":"Base + Maschere pittoriche LR","desc":"1) GLOBALE: valori base per questa foto (esposizione, luci, ombre, neri, bianchi, contrasto, temperatura). 2) MASCHERA LUCE (Dros): Soggetto AI + Intersect Gamma Luminanza alte luci (Range 60-100) → scalda e schiarisci le luci sul soggetto. 3) MASCHERA OMBRA: Soggetto AI + Intersect Gamma Luminanza ombre (Range 0-45) → scurisci e raffredda le ombre del soggetto. 4) MASCHERA FONDO: Gradiente Lineare + Intersect Gamma Luminanza ombre → porta fondo al nero. 5) ALONE PITTORICO: Gradiente Radiale sul soggetto + Sottrai Soggetto AI → alone di luce morbido attorno. Spiega i valori specifici per questa foto e stile.","luminar":""},{"sw":"MTC Pro","tipo":"color","icona":"palette","titolo":"quale tool MTC Pro","desc":"specifica lo strumento MTC Pro da usare: CurveM (color grading globale), Color Wheels (viraggio per zone tonali), Hue vs Hue (trasforma un colore specifico), Hue vs Sat (desaturazione selettiva), Grid Tool (scultura LAB). Spiega cosa fare con quel tool su questa foto.","luminar":""},{"sw":"MTC Density","tipo":"fix","icona":"adjustments-horizontal","titolo":"canali da toccare","desc":"indica canale R/G/B/C/M/Y/Skin e tipo intervento: Density (peso visivo senza toccare sat) o Sat subtrattiva (arricchisce naturalmente). Intensità: leggero/medio/deciso.","luminar":""},{"sw":"MTC ChromaWarp","tipo":"color","icona":"palette","titolo":"coppie sorgente-target","desc":"definisci le coppie da impostare sulla ruota CIELAB: colore sorgente nella foto → colore target barocco. Suggerisci Anchor Points per proteggere i skin tones.","luminar":""},{"sw":"Luminar Neo","tipo":"add-light","icona":"sun","titolo":"quale tool Luminar Neo usare","desc":"indica in italiano SOLO i tool che servono su questa foto specifica, scegliendo tra: TRASFERIMENTO COLORE (pannello Creativo) - trasferisci la palette dal dipinto di riferimento, usa Match Similar Objects per abbinare colori simili tra foto e dipinto; PROFONDITA DELLA LUCE (Creativo) - aggiunge separazione realistica della luce con pochi slider, sostituisce Relight AI; ATMOSFERA (Creativo) - nebbia e foschia con depth mapping 3D, essenziale per Dark Forest e Nord Barocco; MIGLIORA CREPUSCOLO AI (Creativo/Paesaggio) - per foto outdoor: preset Blush/Golden/Blue/Emerald/Mauve + slider Quantita, tab Cielo (Temperatura, Tinta, Esposizione, Fusione Orizzonte), tab Alba (Quantita, Dimensione, Temperatura), tab Scena (Ombra, Saturazione, Relight Human), tab Riflessione Acqua - utile per Dark Forest e Nord Barocco; PELLE AI (Ritratto) - Rimozione Imperfezioni, Rimozione Brillantezza, Levigatezza Pelle con Mask Feather per transizioni morbide; VISO AI (Ritratto) - Illuminazione Viso per aggiungere luce e definizione, Rossore Labbra per accento cromatico, Rimozione Occhiaie; SUPERCONTRASTO (Essenziali) - contrasto selettivo per Alteluci/Mezzitoni/Ombre separatamente; STRUTTURA AI (Essenziali) - aumenta dettaglio su paesaggi e architettura, evita automaticamente le persone; BOKEH AI - sfocatura sfondo realistica per ritratti, funziona anche su oggetti. Per ogni tool indica il pannello esatto in italiano e cosa fare di preciso su questa foto.","luminar":"tool esatto e valore numerico"}],"sintesi":"2-3 righe sintesi su questa foto specifica","chromawarp":[{"canale":"colore dominante nella foto da trasformare (es. Verde)","hex_sorgente":"#hex colore attuale","hex_target":"#hex colore barocco obiettivo","hue_gradi":+35,"saturation_delta":-15,"brightness_delta":-10,"mtc_density_canale":"canale MTC Density da toccare (R/G/B/C/M/Y/Skin)","mtc_density_val":-20,"nota":"spiegazione del perche di questa trasformazione"},{"canale":"secondo colore da trasformare","hex_sorgente":"#hex","hex_target":"#hex","hue_gradi":0,"saturation_delta":-25,"brightness_delta":-15,"mtc_density_canale":"canale","mtc_density_val":-15,"nota":"spiegazione"},{"canale":"terzo colore","hex_sorgente":"#hex","hex_target":"#hex","hue_gradi":-20,"saturation_delta":-20,"brightness_delta":-10,"mtc_density_canale":"canale","mtc_density_val":+10,"nota":"spiegazione"},{"canale":"quarto colore","hex_sorgente":"#hex","hex_target":"#hex","hue_gradi":+15,"saturation_delta":+5,"brightness_delta":-5,"mtc_density_canale":"canale","mtc_density_val":-10,"nota":"spiegazione"}]}`; 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3500,system:sys,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:imgMime_2,data:imgB64_2}},{type:'text',text:'Analizza questo ritratto per il workflow Pittorico-Barocco con Luminar Neo. Dimmi quale dipinto scaricare per il trasferimento colore.'}]}]})});
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:6000,system:sys2,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:imgMime_2,data:imgB64_2}},{type:'text',text:'Analizza questo ritratto per il workflow Pittorico-Barocco con Luminar Neo. Dimmi quale dipinto scaricare per il trasferimento colore.'}]}]})});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     const raw=await resp.json();
     const txt=(raw.content||[]).map(i=>i.text||'').join('');
@@ -817,92 +866,62 @@ Rispondi SOLO con JSON valido senza markdown:
     eb.textContent='Errore: '+e.message;
     eb.style.display='block';
   }
-  btn.innerHTML='<i class="ti ti-sparkles"></i> Analizza ritratto';
+  btn.innerHTML='<i class="ti ti-sparkles" aria-hidden="true"></i> Analizza ritratto';
   btn.disabled=false;
 }
 
 function renderBarocco(d){
-  // Mostra tipo foto e stile consigliato
+  const bHeader=document.getElementById('b-header');
   const tipoMap={ritratto:'Ritratto',paesaggio:'Paesaggio',foresta:'Foresta / Dark Forest',architettura:'Architettura',luce_volumetrica:'Luce Volumetrica',alpino:'Paesaggio Alpino / Nord Barocco'};
-  const tipoLabel = tipoMap[d.tipo_foto]||d.tipo_foto||'Foto';
-  const bHeader = document.getElementById('b-header');
-  if(bHeader) bHeader.innerHTML = `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;background:var(--gold-light);color:var(--gold-dark);margin-right:8px">${tipoLabel}</span><span style="font-size:11px;color:var(--text2)">Stile consigliato: <strong style="color:var(--green)">${d.stile_consigliato||''}</strong></span>`;
+  const tipoLabel=tipoMap[d.tipo_foto]||d.tipo_foto||'Foto';
+  if(bHeader)bHeader.innerHTML=`<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;background:var(--gold-light);color:var(--gold-dark);margin-right:8px">${tipoLabel}</span><span style="font-size:11px;color:var(--text2)">Stile consigliato: <strong style="color:var(--green)">${d.stile_consigliato||''}</strong></span>`;
   const dg=document.getElementById('b-diagnosi');
   dg.innerHTML=(d.diagnosi||[]).map(x=>`<div class="diag-card ${x.stato}"><div class="d-label">${x.label}</div><div class="d-val">${x.valore}</div><div class="d-note">${x.nota}</div></div>`).join('');
   const ss=document.getElementById('b-scores');
   ss.innerHTML=(d.scores||[]).map(s=>{const col=s.val>=7?'#1D9E75':s.val>=5?'#E07B2A':'#C0392B';return `<div class="score-row"><div class="score-label">${s.label}</div><div class="score-bar"><div class="score-fill" style="width:${Math.round(s.val*10)}%;background:${col}"></div></div><div class="score-val">${s.val}/10</div></div>`;}).join('');
   const rc=document.getElementById('b-refs');
   rc.innerHTML=(d.riferimenti||[]).map((r,ri)=>`<div class="ref-card"><div class="ref-match ${r.match}">${r.match==='top'?'✦ Riferimento ideale':'Ottima alternativa'}</div><div class="ref-title">${r.opera}</div><div class="ref-pittore">${r.pittore} · ${r.anno} · ${r.museo}</div><div class="ref-desc"><strong>Perché:</strong> ${r.perche}</div><div class="ref-desc"><strong>Cosa copiare con trasferimento colore:</strong> ${r.cosa_prendere}</div><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><div class="ref-search" style="flex:1">${r.search_query}</div><button data-query="${ri}" class="copy-ref-btn" style="padding:4px 10px;font-size:10px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);cursor:pointer;color:var(--text2);font-family:inherit;white-space:nowrap">Copia</button></div></div>`).join('');
-  const icoMap={sun:'ti-sun',moon:'ti-moon',palette:'ti-palette','alert-circle':'ti-alert-circle','adjustments-horizontal':'ti-adjustments-horizontal'};
-  const colMap={'add-light':'light','add-shadow':'shadow','color':'color-ic','fix':'fix'};
   const swColors={'Lightroom':'#1473E6','MTC Pro':'#7B3FA0','MTC Density':'#5C4A1E','MTC ChromaWarp':'#8B2020','Dodge & Burn':'#333333','Luminar Neo':'#1D9E75','Topaz AI':'#0F6E56','Export finale':'#888888','Topaz':'#0F6E56'};
+  const lrBadge=`<div style='display:flex;flex-wrap:wrap;gap:4px;margin-top:5px'><span style='font-size:9px;padding:2px 6px;border-radius:7px;background:rgba(20,115,230,0.12);color:#1473E6;font-weight:600'>🎭 Soggetto AI</span><span style='font-size:9px;padding:2px 6px;border-radius:7px;background:rgba(20,115,230,0.12);color:#1473E6;font-weight:600'>⊕ Intersect Luminanza</span><span style='font-size:9px;padding:2px 6px;border-radius:7px;background:rgba(20,115,230,0.12);color:#1473E6;font-weight:600'>⊖ Sottrai</span><span style='font-size:9px;padding:2px 6px;border-radius:7px;background:rgba(20,115,230,0.12);color:#1473E6;font-weight:600'>◎ Radiale</span></div>`;
   document.getElementById('b-actions').innerHTML=(d.azioni||[]).map(a=>{
     const swCol=swColors[a.sw]||'#1D9E75';
-    const luminarLine = a.luminar ? `<div class="action-luminar"><i class="ti ti-adjustments-horizontal" style="font-size:10px"></i> Luminar: ${a.luminar}</div>` : '';
-    const lrBadge = a.sw==='Lightroom' ? `<div style='display:flex;flex-wrap:wrap;gap:4px;margin-top:5px'><span style='font-size:9px;padding:2px 6px;border-radius:7px;background:rgba(20,115,230,0.12);color:#1473E6;font-weight:600'>🎭 Soggetto AI</span><span style='font-size:9px;padding:2px 6px;border-radius:7px;background:rgba(20,115,230,0.12);color:#1473E6;font-weight:600'>⊕ Intersect</span><span style='font-size:9px;padding:2px 6px;border-radius:7px;background:rgba(20,115,230,0.12);color:#1473E6;font-weight:600'>☀ Gamma Luminanza</span><span style='font-size:9px;padding:2px 6px;border-radius:7px;background:rgba(20,115,230,0.12);color:#1473E6;font-weight:600'>⊖ Sottrai</span><span style='font-size:9px;padding:2px 6px;border-radius:7px;background:rgba(20,115,230,0.12);color:#1473E6;font-weight:600'>◎ Gradiente Radiale</span></div>` : '';
-    return `<div class="action-item ${a.tipo}" style="border-left-color:${swCol}">`+
-      `<div style="min-width:80px;font-size:9px;font-weight:700;color:${swCol};padding-top:2px;line-height:1.3">${a.sw||''}</div>`+
-      `<div style='flex:1'><div class="action-title">${a.titolo}</div><div class="action-desc">${a.desc}</div>${luminarLine}${lrBadge}</div></div>`;
+    const luminarLine=a.luminar?`<div class="action-luminar"><i class="ti ti-adjustments-horizontal" style="font-size:10px"></i> ${a.luminar}</div>`:'';
+    const lrB=a.sw==='Lightroom'?lrBadge:'';
+    return `<div class="action-item ${a.tipo}" style="border-left-color:${swCol}"><div style="min-width:80px;font-size:9px;font-weight:700;color:${swCol};padding-top:2px;line-height:1.3">${a.sw||''}</div><div style='flex:1'><div class="action-title">${a.titolo}</div><div class="action-desc">${a.desc}</div>${luminarLine}${lrB}</div></div>`;
   }).join('');
-  // Sequenza workflow
-  const wfSeq = document.getElementById('b-workflow-seq');
-  const wfSteps = [
-    {sw:'Lightroom', col:'#1473E6', note:'Esposizione, contrasto, luci/ombre, HSL, curve — base del tono'},
-    {sw:'MTC Pro', col:'#7B3FA0', note:'Color web per il tuo stile · contrasto pittorico'},
-    {sw:'MTC Density', col:'#5C4A1E', note:'Densità e struttura dell\'immagine'},
-    {sw:'MTC ChromaWarp', col:'#8B2020', note:'Viraggio cromatico finale'},
-    {sw:'Luminar Neo', col:'#1D9E75', note:'Trasferimento Colore · Profondità della Luce · Atmosfera · Migliora Crepuscolo AI (outdoor) · Pelle AI / Viso AI (ritratti) · Supercontrasto · Struttura AI'},
-    {sw:'Topaz AI', col:'#0F6E56', note:'DeNoise se ISO alti · Sharpen selettivo su punti focali'},
-    {sw:'Export LR', col:'#444', note:'TIFF 16bit per stampa · JPEG per stock e Instagram'}
-  ];
-  wfSeq.innerHTML = wfSteps.map((s,i)=>
-    `<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-      <div style="width:90px;font-size:9px;font-weight:700;color:${s.col};flex-shrink:0">${s.sw}</div>
-      <div style="flex:1;font-size:11px;color:var(--text2);background:var(--bg2);padding:6px 10px;border-radius:var(--radius);border-left:2px solid ${s.col}">${s.note}</div>
-      ${i<wfSteps.length-1?'<div style="font-size:10px;color:var(--text3)">↓</div>':''}
-    </div>`
-  ).join('');
   // ChromaWarp rendering
-  const cwDiv = document.getElementById('b-chromawarp');
-  if(d.chromawarp && d.chromawarp.length){
-    cwDiv.innerHTML =
-    `<div style='font-size:11px;color:var(--text2);margin-bottom:10px;padding:9px 12px;background:var(--bg2);border-radius:var(--radius);border-left:3px solid #8B2020'>`+
-    `<strong style='color:#8B2020'>ChromaWarp</strong> — Trascina il punto del colore sorgente verso il colore target sulla ruota. `+
-    `<strong style='color:#5C4A1E'>MTC Density</strong> — Aggiusta il canale indicato con il valore suggerito.</div>` +
+  const cwDiv=document.getElementById('b-chromawarp');
+  if(d.chromawarp&&d.chromawarp.length){
+    cwDiv.innerHTML=`<div style='font-size:11px;color:var(--text2);margin-bottom:10px;padding:9px 12px;background:var(--bg2);border-radius:var(--radius);border-left:3px solid #8B2020'><strong style='color:#8B2020'>ChromaWarp</strong> — Trascina il nodo del colore sorgente verso il colore target sulla ruota. <strong style='color:#5C4A1E'>MTC Density</strong> — Aggiusta il canale indicato.</div>`+
     (d.chromawarp||[]).map(c=>{
-      const hueSgn=c.hue_gradi>0?'+':''; const satSgn=c.saturation_delta>0?'+':''; const briSgn=c.brightness_delta>0?'+':'';
+      const hueSgn=c.hue_gradi>0?'+':'';const satSgn=c.saturation_delta>0?'+':'';const briSgn=c.brightness_delta>0?'+':'';
       const densVal=c.mtc_density_val>0?'+'+c.mtc_density_val:c.mtc_density_val;
       const hueCol=c.hue_gradi!==0?(c.hue_gradi>0?'pos':'neg'):'neu';
       const satCol=c.saturation_delta!==0?(c.saturation_delta>0?'pos':'neg'):'neu';
       const briCol=c.brightness_delta!==0?(c.brightness_delta>0?'pos':'neg'):'neu';
-      return `<div class='cw-card'>`+
-        `<div style='display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0'>`+
-          `<div class='cw-swatch' style='background:${c.hex_sorgente};height:28px;width:36px' title='Sorgente'></div>`+
-          `<div style='font-size:9px;color:var(--text3)'>↓</div>`+
-          `<div class='cw-swatch' style='background:${c.hex_target};height:28px;width:36px' title='Target'></div>`+
-        `</div>`+
-        `<div style='flex:1'>`+
-          `<div style='font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px'>${c.canale}</div>`+
-          `<div style='font-size:10px;font-weight:600;color:#8B2020;margin-bottom:3px'>ChromaWarp — trascina il punto sorgente verso il target:</div>`+
-          `<div class='cw-vals'>`+
-            `<span class='cw-val ${hueCol}'>Hue ${hueSgn}${c.hue_gradi}°</span>`+
-            `<span class='cw-val ${satCol}'>Sat ${satSgn}${c.saturation_delta}</span>`+
-            `<span class='cw-val ${briCol}'>Brightness ${briSgn}${c.brightness_delta}</span>`+
-          `</div>`+
-          `<div style='font-size:10px;font-weight:600;color:#5C4A1E;margin-top:6px;margin-bottom:2px'>MTC Density — canale ${c.mtc_density_canale}:</div>`+
-          `<div class='cw-vals'><span class='cw-val ${c.mtc_density_val>0?'pos':c.mtc_density_val<0?'neg':'neu'}'>Density/Sat ${densVal}</span></div>`+
-          `<div style='font-size:10px;color:var(--text2);margin-top:5px;font-style:italic'>${c.nota}</div>`+
-        `</div>`+
-      `</div>`;
+      return `<div class='cw-card'><div style='display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0'><div class='cw-swatch' style='background:${c.hex_sorgente};height:28px;width:36px'></div><div style='font-size:9px;color:var(--text3)'>↓</div><div class='cw-swatch' style='background:${c.hex_target};height:28px;width:36px'></div></div><div style='flex:1'><div style='font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px'>${c.canale}</div><div style='font-size:10px;font-weight:600;color:#8B2020;margin-bottom:3px'>ChromaWarp — trascina nodo sorgente verso target:</div><div class='cw-vals'><span class='cw-val ${hueCol}'>Hue ${hueSgn}${c.hue_gradi}°</span><span class='cw-val ${satCol}'>Sat ${satSgn}${c.saturation_delta}</span><span class='cw-val ${briCol}'>Brightness ${briSgn}${c.brightness_delta}</span></div><div style='font-size:10px;font-weight:600;color:#5C4A1E;margin-top:6px;margin-bottom:2px'>MTC Density — canale ${c.mtc_density_canale}:</div><div class='cw-vals'><span class='cw-val ${c.mtc_density_val>0?'pos':c.mtc_density_val<0?'neg':'neu'}'>Density/Sat ${densVal}</span></div><div style='font-size:10px;color:var(--text2);margin-top:5px;font-style:italic'>${c.nota}</div></div></div>`;
     }).join('');
   } else {
-    cwDiv.innerHTML = '<div style="font-size:12px;color:var(--text2)">Dati ChromaWarp non disponibili — rianalizza la foto</div>';
+    cwDiv.innerHTML='<div style="font-size:12px;color:var(--text2)">Dati ChromaWarp non disponibili</div>';
   }
-  document.getElementById('b-refs').onclick = e => {
-    const btn = e.target.closest('.copy-ref-btn');
-    if(!btn) return;
-    const ri = parseInt(btn.dataset.query);
-    const query = (d.riferimenti||[])[ri]?.search_query||'';
+  // Workflow seq
+  const wfSeq=document.getElementById('b-workflow-seq');
+  const wfSteps=[
+    {sw:'Lightroom',col:'#1473E6',note:'Esposizione, contrasto, luci/ombre, HSL, curve — base tono + maschere Dros'},
+    {sw:'MTC Pro',col:'#7B3FA0',note:'Wheel (viraggio Shadows/Highlights), Hue-Sat (desatura verdi/blu), CurveM'},
+    {sw:'MTC Density',col:'#5C4A1E',note:'Verde Sat 0.70 HueShift +15 · Ciano Sat 0.65 Density 0.30 · Blu Sat 0.75'},
+    {sw:'MTC ChromaWarp',col:'#8B2020',note:'Nodo Verde → Giallo-arancio · Ciano → Blu · Blu → Viola · Rosso fermo'},
+    {sw:'Luminar Neo',col:'#1D9E75',note:'Trasferimento Colore · Profondità Luce · Pelle AI / Viso AI (ritratti)'},
+    {sw:'Topaz AI',col:'#0F6E56',note:'DeNoise se ISO alti · Sharpen selettivo su punti focali'},
+    {sw:'Export LR',col:'#444',note:'TIFF 16bit stampa · JPEG 300dpi stock · sRGB Instagram'}
+  ];
+  wfSeq.innerHTML=wfSteps.map((s,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><div style="width:90px;font-size:9px;font-weight:700;color:${s.col};flex-shrink:0">${s.sw}</div><div style="flex:1;font-size:11px;color:var(--text2);background:var(--bg2);padding:6px 10px;border-radius:var(--radius);border-left:2px solid ${s.col}">${s.note}</div>${i<wfSteps.length-1?'<div style="font-size:10px;color:var(--text3)">↓</div>':''}</div>`).join('');
+  // Event delegation copia ref
+  document.getElementById('b-refs').onclick=e=>{
+    const btn=e.target.closest('.copy-ref-btn');
+    if(!btn)return;
+    const ri=parseInt(btn.dataset.query);
+    const query=(d.riferimenti||[])[ri]?.search_query||'';
     navigator.clipboard.writeText(query).then(()=>{btn.textContent='Copiato!';setTimeout(()=>btn.textContent='Copia',1800);});
   };
   if(d.sintesi){const sb=document.getElementById('b-sintesi');sb.textContent=d.sintesi;sb.style.display='block';}
@@ -910,7 +929,21 @@ function renderBarocco(d){
   document.getElementById('res2').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// ── PDF AGENTE ──
+function resetBarocco(){
+  imgB64_2=null;imgData2=null;
+  mX2.clearRect(0,0,mc2.width,mc2.height);oX2.clearRect(0,0,ov2.width,ov2.height);
+  document.getElementById('cw2').style.display='none';
+  document.getElementById('map-controls-wrap').style.display='none';
+  document.getElementById('nb2').style.display='none';
+  document.getElementById('res2').style.display='none';
+  document.getElementById('err2').style.display='none';
+  uz2.style.display='block';fi2.value='';
+  document.getElementById('ab2').disabled=true;
+  document.querySelectorAll('.map-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('mb-orig').classList.add('active');
+}
+
+// PDF AGENTE
 function makePDF1(type){
   if(!data1||!window.jspdf)return;
   const{jsPDF}=window.jspdf;
@@ -921,7 +954,6 @@ function makePDF1(type){
   const bdy=(t,sz=9,rgb=[40,40,40])=>{doc.setFont(undefined,'normal');doc.setFontSize(sz);doc.setTextColor(...rgb);const ls=doc.splitTextToSize(t,cw);doc.text(ls,m,y);y+=ls.length*(sz*0.42+1)+3;chk();};
   const sep=()=>{doc.setDrawColor(210,210,210);doc.line(m,y,pw-m,y);y+=5;chk();};
   const box=(lbl,txt,rgb=[240,249,245])=>{const ls=doc.splitTextToSize(txt,cw-10);const h=ls.length*(9*0.42+1)+14;doc.setFillColor(...rgb);doc.roundedRect(m,y,cw,h,2,2,'F');doc.setFont(undefined,'bold');doc.setFontSize(8);doc.setTextColor(100,100,100);doc.text(lbl.toUpperCase(),m+5,y+6);doc.setFont(undefined,'normal');doc.setFontSize(9);doc.setTextColor(40,40,40);doc.text(ls,m+5,y+12);y+=h+5;chk();};
-
   if(type==='workflow'){
     ttl('Workflow di Post-Produzione',16);bdy('Stile: '+(data1.style||selStyle_1)+' — Agente Fotografico Pro',9,[100,100,100]);sep();ttl('Pipeline',12);
     (data1.pipeline||[]).forEach(p=>{const txt=p.sw+' — '+p.az+': '+p.det;const ls=doc.splitTextToSize(txt,cw-18);const h=ls.length*(9*0.42+1)+12;doc.setFillColor(240,249,245);doc.roundedRect(m,y,cw,h,2,2,'F');doc.setFont(undefined,'bold');doc.setFontSize(9);doc.setTextColor(15,110,86);doc.text(p.n+'.',m+4,y+7);doc.setFont(undefined,'normal');doc.setFontSize(9);doc.setTextColor(40,40,40);doc.text(ls,m+13,y+7);y+=h+4;chk();});
@@ -936,7 +968,7 @@ function makePDF1(type){
     doc.save('piano_editoriale.pdf');showPs('ped1');
   }else if(type==='farei'){
     ttl('Come lo farei io — Workflow Completo',16);
-    bdy('Stile: '+(data1.style||selStyle_1)+' — Simulazione workflow Andrea · Canon EOS 5D Mark III',9,[100,100,100]);
+    bdy('Stile: '+(data1.style||selStyle_1)+' — Agente Fotografico Pro',9,[100,100,100]);
     sep();
     const swC={'Lightroom':[20,80,200],'MTC Pro':[123,63,160],'MTC Density':[92,74,30],'MTC ChromaWarp':[139,32,32],'Dodge & Burn':[60,60,60],'Luminar Neo':[15,110,86],'Topaz AI':[15,80,60],'Export finale':[100,100,100]};
     (data1.farei||[]).forEach(f=>{
@@ -958,7 +990,7 @@ function makePDF1(type){
   }
 }
 
-function showPs(id){const el=document.getElementById(id);el.textContent='✓ Scaricato';setTimeout(()=>el.textContent='',3000);}
+function showPs(id){const el=document.getElementById(id);if(el){el.textContent='✓ Scaricato';setTimeout(()=>el.textContent='',3000);}}
 </script>
 </body>
 </html>
